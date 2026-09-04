@@ -96,8 +96,11 @@ tests.integration(adapterDir, {
                     const historyMax = await getState(harness, 'ecovacs-map.0.TestBot.history.maxEntries');
                     assert.equal(Number(historyMax?.val), 100);
 
-                    const deviceCount = await getState(harness, 'ecovacs-map.0.info.devices');
-                    assert.equal(Number(deviceCount?.val), 1);
+                    const deviceCount = await waitFor(async () => {
+                          const state = await getState(harness, 'ecovacs-map.0.info.devices');
+                          return Number(state?.val) === 1 ? state : null;
+                    });
+                    assert.equal(Number(deviceCount.val), 1);
 
                     const connection = await getState(harness, 'ecovacs-map.0.info.connection');
                     assert.equal(connection?.val, true);
