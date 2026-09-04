@@ -6,7 +6,12 @@
       "type": "text",
       "label": "Source instance",
       "help": "Use auto to detect all ecovacs-deebot.* instances, or enter one instance such as ecovacs-deebot.0.",
-      "default": "auto"
+      "default": "auto",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
     },
     "positionRefreshInterval": {
       "type": "number",
@@ -14,26 +19,45 @@
       "help": "Additional polling for live position if the source adapter does not emit reliable state events.",
       "min": 1,
       "max": 60,
-      "default": 2
+      "default": 2,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
     },
     "geometryRefreshInterval": {
       "type": "number",
       "label": "Refresh room geometry (seconds)",
       "min": 30,
       "max": 3600,
-      "default": 300
+      "default": 300,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
     },
     "trailLimit": {
       "type": "number",
       "label": "Maximum trail points",
       "min": 10,
       "max": 5000,
-      "default": 500
+      "default": 500,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
     },
     "roomConfigInfo": {
       "type": "staticText",
       "text": "Detected rooms are listed automatically. To merge rooms for VIS, enter multiple comma-separated SpotArea IDs in Room ID(s), for example 2,3. Enter the desired display name in Custom display name. Original Ecovacs rooms and states remain unchanged.",
-      "doNotSave": true
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "roomConfig": {
       "type": "table",
@@ -77,7 +101,12 @@
           "width": "23%",
           "default": ""
         }
-      ]
+      ],
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     }
   }
 }

@@ -25,7 +25,7 @@ Companion adapter for [`ecovacs-deebot`](https://github.com/mrbungle64/ioBroker.
 
 - ioBroker
 - installed and configured `ecovacs-deebot` adapter
-- Node.js >= 20
+- Node.js >= 22
 
 Available functionality depends on the states and map information exposed by the specific robot model through `ecovacs-deebot`.
 
@@ -93,16 +93,35 @@ npm run test:integration
 
 The integration tests use `@iobroker/testing` and create a synthetic `ecovacs-deebot` source, so a real vacuum is not required. See [TESTING.md](TESTING.md).
 
-## German quick start / Deutsche Kurzinfo
-
-`ecovacs-map` ist ein Zusatzadapter für `ecovacs-deebot`. Er zeichnet aus den vorhandenen Raum- und Kartendaten eine eigene SVG/HTML-Karte für VIS. Der Adapter meldet sich nicht selbst bei Ecovacs an.
-
-Mehrere Raum-IDs können in den Einstellungen kommagetrennt zusammengefasst werden, z. B. `2,3`. Die originalen Ecovacs-Räume bleiben dabei erhalten; in VIS werden sie gemeinsam dargestellt und ausgewählt.
-
 ## Disclaimer
 
 This is a community adapter and is not affiliated with or endorsed by Ecovacs. Ecovacs and DEEBOT are trademarks of their respective owners.
 
+## Changelog
+
+### 0.7.0
+- Prepared the adapter for public GitHub/ioBroker publication, including repository metadata, documentation and CI preparation.
+
+### 0.6.7
+- Fixed Admin jsonConfig validation for the room configuration help text.
+
+### 0.6.6
+- Improved the Room ID(s) help text for single and merged room configuration.
+
+### 0.6.5
+- VIS HTML room labels can inherit text styling from the surrounding widget.
+
+### 0.6.4
+- Unified room naming and virtual room merges into one settings table.
+
+### 0.6.3
+- Added device-independent virtual room merges while preserving original Ecovacs SpotArea states and controls.
+
+### 0.6.2
+- Restored the proven 0.5.6 map detection behavior and added detailed room geometry diagnostics.
+
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+Copyright (c) 2026 Helfi9999

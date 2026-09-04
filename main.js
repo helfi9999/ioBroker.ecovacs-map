@@ -33,12 +33,12 @@ class EcovacsMap extends utils.Adapter {
         await this.runSelfTest('startup');
 
         const geometrySeconds = this.clampNumber(this.config.geometryRefreshInterval, 300, 30, 3600);
-        this.geometryTimer = setInterval(() => {
+        this.geometryTimer = this.setInterval(() => {
             this.refreshAllGeometry().catch(error => this.log.warn(`Geometry refresh failed: ${error.message}`));
         }, geometrySeconds * 1000);
 
         const positionSeconds = this.clampNumber(this.config.positionRefreshInterval, 2, 1, 60);
-        this.positionTimer = setInterval(() => {
+        this.positionTimer = this.setInterval(() => {
             this.refreshAllPositions().catch(error => this.log.warn(`Position refresh failed: ${error.message}`));
         }, positionSeconds * 1000);
 
@@ -47,9 +47,9 @@ class EcovacsMap extends utils.Adapter {
 
     onUnload(callback) {
         try {
-            if (this.geometryTimer) clearInterval(this.geometryTimer);
-            if (this.positionTimer) clearInterval(this.positionTimer);
-            for (const timer of this.rebuildTimers.values()) clearTimeout(timer);
+            if (this.geometryTimer) this.clearInterval(this.geometryTimer);
+            if (this.positionTimer) this.clearInterval(this.positionTimer);
+            for (const timer of this.rebuildTimers.values()) this.clearTimeout(timer);
             callback();
         } catch {
             callback();
@@ -1723,8 +1723,8 @@ class EcovacsMap extends utils.Adapter {
     }
 
     scheduleRebuild(device) {
-        if (this.rebuildTimers.has(device.key)) clearTimeout(this.rebuildTimers.get(device.key));
-        this.rebuildTimers.set(device.key, setTimeout(() => {
+        if (this.rebuildTimers.has(device.key)) this.clearTimeout(this.rebuildTimers.get(device.key));
+        this.rebuildTimers.set(device.key, this.setTimeout(() => {
             this.rebuildTimers.delete(device.key);
             this.rebuildView(device).catch(error => this.log.warn(`${device.name}: view rebuild failed: ${error.message}`));
         }, 150));
@@ -1829,7 +1829,7 @@ class EcovacsMap extends utils.Adapter {
         // Give the source adapter a short chance to acknowledge the write. This is
         // diagnostic only; VIS keeps the local selection even when cloud/app sync is
         // not supported by a particular ecovacs-deebot version/model.
-        setTimeout(async () => {
+        this.setTimeout(async () => {
             try {
                 let confirmed = false;
                 for (const source of sources) {
@@ -1870,12 +1870,12 @@ class EcovacsMap extends utils.Adapter {
 
     async startSelectionCapture(device) {
         const existing = this.selectionCaptures.get(device.key);
-        if (existing?.timer) clearTimeout(existing.timer);
+        if (existing?.timer) this.clearTimeout(existing.timer);
         const capture = { started: Date.now(), events: new Map(), timer: null };
         this.selectionCaptures.set(device.key, capture);
         await this.setStateAsync(`${device.key}.status.selectionCaptureActive`, true, true);
         await this.setStateAsync(`${device.key}.status.selectionCaptureReport`, 'Aufzeichnung läuft 30 Sekunden – jetzt in der Ecovacs-App Raum/Räume auswählen.', true);
-        capture.timer = setTimeout(() => {
+        capture.timer = this.setTimeout(() => {
             this.finishSelectionCapture(device).catch(error => this.log.warn(`${device.name}: selection capture finish failed: ${error.message}`));
         }, 30000);
     }
@@ -1883,7 +1883,7 @@ class EcovacsMap extends utils.Adapter {
     async finishSelectionCapture(device) {
         const capture = this.selectionCaptures.get(device.key);
         if (!capture) return;
-        if (capture.timer) clearTimeout(capture.timer);
+        if (capture.timer) this.clearTimeout(capture.timer);
         this.selectionCaptures.delete(device.key);
         const rows = [...capture.events.values()].sort((a, b) => a.first - b.first);
         const report = rows.length

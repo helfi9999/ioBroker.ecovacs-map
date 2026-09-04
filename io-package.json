@@ -4,11 +4,29 @@
     "version": "0.7.0",
     "titleLang": {
       "en": "Ecovacs Map",
-      "de": "Ecovacs Karte"
+      "de": "Ecovacs Karte",
+      "ru": "Карта Ecovacs",
+      "pt": "Mapa Ecovacs",
+      "nl": "Ecovacs-kaart",
+      "fr": "Carte Ecovacs",
+      "it": "Mappa Ecovacs",
+      "es": "Mapa Ecovacs",
+      "pl": "Mapa Ecovacs",
+      "uk": "Карта Ecovacs",
+      "zh-cn": "Ecovacs 地图"
     },
     "desc": {
       "en": "Interactive SVG/HTML room map, live robot position, room selection and controls for ecovacs-deebot.",
-      "de": "Interaktive SVG/HTML-Raumkarte, Live-Roboterposition, Raumauswahl und Steuerung für ecovacs-deebot."
+      "de": "Interaktive SVG/HTML-Raumkarte, Live-Roboterposition, Raumauswahl und Steuerung für ecovacs-deebot.",
+      "ru": "Интерактивная SVG/HTML-карта комнат, текущее положение робота, выбор комнат и управление для ecovacs-deebot.",
+      "pt": "Mapa interativo de divisões em SVG/HTML, posição ao vivo do robô, seleção de divisões e controlos para ecovacs-deebot.",
+      "nl": "Interactieve SVG/HTML-kamerkaart, live robotpositie, kamerselectie en bediening voor ecovacs-deebot.",
+      "fr": "Carte interactive des pièces en SVG/HTML, position du robot en direct, sélection des pièces et commandes pour ecovacs-deebot.",
+      "it": "Mappa interattiva delle stanze SVG/HTML, posizione live del robot, selezione stanze e controlli per ecovacs-deebot.",
+      "es": "Mapa interactivo de habitaciones SVG/HTML, posición del robot en directo, selección de habitaciones y controles para ecovacs-deebot.",
+      "pl": "Interaktywna mapa pomieszczeń SVG/HTML, bieżąca pozycja robota, wybór pomieszczeń i sterowanie dla ecovacs-deebot.",
+      "uk": "Інтерактивна SVG/HTML-карта кімнат, поточне положення робота, вибір кімнат і керування для ecovacs-deebot.",
+      "zh-cn": "用于 ecovacs-deebot 的交互式 SVG/HTML 房间地图、机器人实时位置、房间选择和控制。"
     },
     "authors": [
       "Helfi9999"
@@ -21,7 +39,6 @@
       "vis"
     ],
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "ecovacs-map.png",
     "enabled": true,
     "extIcon": "https://raw.githubusercontent.com/helfi9999/ioBroker.ecovacs-map/main/admin/ecovacs-map.png",
@@ -38,66 +55,111 @@
     "news": {
       "0.7.0": {
         "en": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
-        "de": "Adapter für die öffentliche GitHub-/ioBroker-Veröffentlichung mit Repository-Metadaten, Dokumentation und CI-Struktur vorbereitet."
+        "de": "Adapter für die öffentliche GitHub-/ioBroker-Veröffentlichung mit Repository-Metadaten, Dokumentation und CI-Struktur vorbereitet.",
+        "ru": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "pt": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "nl": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "fr": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "it": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "es": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "pl": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "uk": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
+        "zh-cn": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure."
       },
       "0.6.7": {
         "en": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
-        "de": "ioBroker-Admin-jsonConfig-Validierung beim Hilfetext der Raumkonfiguration korrigiert."
+        "de": "ioBroker-Admin-jsonConfig-Validierung beim Hilfetext der Raumkonfiguration korrigiert.",
+        "ru": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "pt": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "nl": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "fr": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "it": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "es": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "pl": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "uk": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text.",
+        "zh-cn": "Fixed ioBroker Admin jsonConfig validation for the room configuration help text."
       },
       "0.6.6": {
         "en": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
-        "de": "Hilfetext bei „Raum-ID(s)“ in den Adapter-Einstellungen verständlicher formuliert."
+        "de": "Hilfetext bei „Raum-ID(s)“ in den Adapter-Einstellungen verständlicher formuliert.",
+        "ru": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "pt": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "nl": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "fr": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "it": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "es": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "pl": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "uk": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration.",
+        "zh-cn": "Improved the Room ID(s) help text in adapter settings for clearer single-room and merged-room configuration."
       },
       "0.6.5": {
         "en": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
-        "de": "Raumnamen in der VIS-HTML-Karte übernehmen jetzt die Textgestaltung des umgebenden Widgets (Farbe, Schrift, Größe, Stärke, Abstände und Textschatten)."
+        "de": "Raumnamen in der VIS-HTML-Karte übernehmen jetzt die Textgestaltung des umgebenden Widgets (Farbe, Schrift, Größe, Stärke, Abstände und Textschatten).",
+        "ru": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "pt": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "nl": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "fr": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "it": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "es": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "pl": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "uk": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow).",
+        "zh-cn": "VIS HTML room labels now inherit text styling from the surrounding widget (color, font, size, weight, spacing and text shadow)."
       },
       "0.6.4": {
         "en": "Unified room names and virtual room merges into one automatically populated settings table.",
-        "de": "Raumnamen und virtuelle Raum-Zusammenführungen in einer automatisch befüllten Einstellungstabelle zusammengeführt."
+        "de": "Raumnamen und virtuelle Raum-Zusammenführungen in einer automatisch befüllten Einstellungstabelle zusammengeführt.",
+        "ru": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "pt": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "nl": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "fr": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "it": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "es": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "pl": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "uk": "Unified room names and virtual room merges into one automatically populated settings table.",
+        "zh-cn": "Unified room names and virtual room merges into one automatically populated settings table."
       },
       "0.6.3": {
         "en": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
-        "de": "Geräteunabhängige virtuelle Raum-Zusammenführung für VIS ergänzt; alle originalen Ecovacs-SpotArea-States und Steuerungen bleiben erhalten."
+        "de": "Geräteunabhängige virtuelle Raum-Zusammenführung für VIS ergänzt; alle originalen Ecovacs-SpotArea-States und Steuerungen bleiben erhalten.",
+        "ru": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "pt": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "nl": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "fr": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "it": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "es": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "pl": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "uk": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls.",
+        "zh-cn": "Added device-independent virtual room merges for VIS while preserving all original Ecovacs SpotArea states and controls."
       },
       "0.6.2": {
         "en": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
-        "de": "Bewährte Kartenerkennung aus 0.5.6 wiederhergestellt und detaillierten Diagnosebericht der Raumgeometrie-Quellen ergänzt."
-      },
-      "0.5.6": {
-        "en": "Added per-robot live cleaning report and bounded event history with clear/size controls.",
-        "de": "Live-Reinigungsreport und begrenzte Ereignishistorie pro Sauger mit Lösch- und Größensteuerung ergänzt."
-      },
-      "0.5.5": {
-        "en": "Added automatic room-name settings with optional custom display names for older Ecovacs models.",
-        "de": "Automatische Raumnamen-Einstellungen mit optionalen eigenen Anzeigenamen für ältere Ecovacs-Modelle ergänzt."
-      },
-      "0.5.4": {
-        "en": "Updated the adapter icon/logo with the new vacuum-map branding.",
-        "de": "Adapter-Icon/Logo auf das neue Vakuum-Karten-Branding aktualisiert."
-      },
-      "0.5.1": {
-        "en": "Added missing package metadata required by ioBroker package tests.",
-        "de": "Fehlende Paket-Metadaten für die ioBroker-Pakettests ergänzt."
-      },
-      "0.5.0": {
-        "en": "Added QA and integration tests with a simulated ecovacs-deebot source.",
-        "de": "QA- und Integrationstests mit simulierter ecovacs-deebot-Quelle ergänzt."
-      },
-      "0.5.2": {
-        "en": "Improved isolated integration tests for synthetic Ecovacs room selection and robot telemetry.",
-        "de": "Verbesserte isolierte Integrationstests für synthetische Ecovacs-Raumauswahl und Roboter-Telemetrie."
-      },
-      "0.5.3": {
-        "en": "Stabilized integration tests to use a single adapter lifecycle with a synthetic Deebot source.",
-        "de": "Integrationstests auf einen einzigen Adapter-Lebenszyklus mit synthetischer Deebot-Quelle stabilisiert."
+        "de": "Bewährte Kartenerkennung aus 0.5.6 wiederhergestellt und detaillierten Diagnosebericht der Raumgeometrie-Quellen ergänzt.",
+        "ru": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "pt": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "nl": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "fr": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "it": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "es": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "pl": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "uk": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report.",
+        "zh-cn": "Restored the proven 0.5.6 map-detection behavior and added a detailed per-room geometry source diagnostic report."
       }
     },
     "tier": 3,
     "licenseInformation": {
       "license": "MIT",
       "type": "free"
-    }
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.6.20"
+      }
+    ]
   },
   "native": {
     "sourceInstance": "auto",
@@ -207,6 +269,5 @@
       },
       "native": {}
     }
-  ],
-  "version": "0.7.0"
+  ]
 }
