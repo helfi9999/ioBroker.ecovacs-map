@@ -1,0 +1,55 @@
+{
+  "name": "iobroker.ecovacs-map",
+  "version": "0.7.0",
+  "description": "Interactive room map, live robot position, room selection and controls for ioBroker ecovacs-deebot",
+  "author": "Helfi9999",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "ecovacs",
+    "deebot",
+    "vacuum",
+    "map",
+    "vis"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.4.3"
+  },
+  "main": "main.js",
+  "files": [
+    "admin/",
+    "io-package.json",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "main.js",
+    "test/",
+    "QA-CHECKLIST.md",
+    "TESTING.md"
+  ],
+  "scripts": {
+    "start": "node main.js",
+    "check": "node --check main.js",
+    "test:qa": "node test/qa.js && node --check main.js",
+    "test:package": "mocha test/package.test.js --exit",
+    "test:integration": "mocha test/integration.test.js --exit",
+    "test": "npm run test:qa && npm run test:package",
+    "test:full": "npm run test:qa && npm run test:package && npm run test:integration",
+    "qa": "npm run test:qa"
+  },
+  "devDependencies": {
+    "@iobroker/testing": "^5.3.0",
+    "mocha": "^11.7.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helfi9999/ioBroker.ecovacs-map.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helfi9999/ioBroker.ecovacs-map/issues"
+  },
+  "homepage": "https://github.com/helfi9999/ioBroker.ecovacs-map#readme"
+}

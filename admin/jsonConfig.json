@@ -1,0 +1,83 @@
+{
+  "i18n": true,
+  "type": "panel",
+  "items": {
+    "sourceInstance": {
+      "type": "text",
+      "label": "Source instance",
+      "help": "Use auto to detect all ecovacs-deebot.* instances, or enter one instance such as ecovacs-deebot.0.",
+      "default": "auto"
+    },
+    "positionRefreshInterval": {
+      "type": "number",
+      "label": "Position fallback (seconds)",
+      "help": "Additional polling for live position if the source adapter does not emit reliable state events.",
+      "min": 1,
+      "max": 60,
+      "default": 2
+    },
+    "geometryRefreshInterval": {
+      "type": "number",
+      "label": "Refresh room geometry (seconds)",
+      "min": 30,
+      "max": 3600,
+      "default": 300
+    },
+    "trailLimit": {
+      "type": "number",
+      "label": "Maximum trail points",
+      "min": 10,
+      "max": 5000,
+      "default": 500
+    },
+    "roomConfigInfo": {
+      "type": "staticText",
+      "text": "Detected rooms are listed automatically. To merge rooms for VIS, enter multiple comma-separated SpotArea IDs in Room ID(s), for example 2,3. Enter the desired display name in Custom display name. Original Ecovacs rooms and states remain unchanged.",
+      "doNotSave": true
+    },
+    "roomConfig": {
+      "type": "table",
+      "label": "Rooms",
+      "noDelete": true,
+      "compact": true,
+      "items": [
+        {
+          "type": "text",
+          "attr": "deviceName",
+          "title": "Device",
+          "width": "18%",
+          "readOnly": true
+        },
+        {
+          "type": "text",
+          "attr": "sourceInstance",
+          "title": "Source",
+          "width": "22%",
+          "readOnly": true
+        },
+        {
+          "type": "text",
+          "attr": "roomIds",
+          "title": "Room ID(s)",
+          "width": "12%",
+          "default": "",
+          "help": "One ID per room or multiple comma-separated IDs to merge, e.g. 2,3."
+        },
+        {
+          "type": "text",
+          "attr": "ecovacsName",
+          "title": "Ecovacs name",
+          "width": "25%",
+          "readOnly": true
+        },
+        {
+          "type": "text",
+          "attr": "customName",
+          "title": "Custom display name",
+          "width": "23%",
+          "default": ""
+        }
+      ]
+    }
+  }
+}
