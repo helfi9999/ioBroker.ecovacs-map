@@ -120,6 +120,7 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 ### 0.6.2
 - Restored the proven 0.5.6 map detection behavior and added detailed room geometry diagnostics.
 
+For older changes, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 ## License
 
 MIT License. See [LICENSE](LICENSE).
