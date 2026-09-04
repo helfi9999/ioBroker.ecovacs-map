@@ -20,7 +20,6 @@
       "vacuum",
       "vis"
     ],
-    "license": "MIT",
     "platform": "Javascript/Node.js",
     "main": "main.js",
     "icon": "ecovacs-map.png",
