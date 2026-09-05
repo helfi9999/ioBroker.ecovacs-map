@@ -99,6 +99,9 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.7 (2026-09-05)
+- Added the missing `common.news` entry for version 0.7.6.
+
 ### 0.7.6 (2026-09-05)
 - Added the missing `common.news` entry for version 0.7.5.
 - Replaced plain `setTimeout()` with the ioBroker adapter timer helper.

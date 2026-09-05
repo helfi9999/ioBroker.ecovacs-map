@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.6",
+    "version": "0.7.7",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -28,16 +28,8 @@
       "uk": "Інтерактивна SVG/HTML-карта кімнат, поточне положення робота, вибір кімнат і керування для ecovacs-deebot.",
       "zh-cn": "用于 ecovacs-deebot 的交互式 SVG/HTML 房间地图、机器人实时位置、房间选择和控制。"
     },
-    "authors": [
-      "Helfi9999"
-    ],
-    "keywords": [
-      "ecovacs",
-      "deebot",
-      "map",
-      "vacuum",
-      "vis"
-    ],
+    "authors": ["Helfi9999"],
+    "keywords": ["ecovacs", "deebot", "map", "vacuum", "vis"],
     "platform": "Javascript/Node.js",
     "icon": "ecovacs-map.png",
     "enabled": true,
@@ -53,6 +45,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.7": {
+        "en": "Added the missing common.news entry for version 0.7.6.",
+        "de": "Fehlenden common.news-Eintrag für Version 0.7.6 ergänzt.",
+        "ru": "Добавлена отсутствующая запись common.news для версии 0.7.6.",
+        "pt": "Adicionada a entrada common.news em falta para a versão 0.7.6.",
+        "nl": "Ontbrekende common.news-vermelding voor versie 0.7.6 toegevoegd.",
+        "fr": "Ajout de l’entrée common.news manquante pour la version 0.7.6.",
+        "it": "Aggiunta la voce common.news mancante per la versione 0.7.6.",
+        "es": "Añadida la entrada common.news que faltaba para la versión 0.7.6.",
+        "pl": "Dodano brakujący wpis common.news dla wersji 0.7.6.",
+        "uk": "Додано відсутній запис common.news для версії 0.7.6.",
+        "zh-cn": "补充了版本 0.7.6 缺失的 common.news 条目。"
+      },
       "0.7.6": {
         "en": "Added missing release news and replaced plain setTimeout() with the ioBroker adapter timer helper.",
         "de": "Fehlende Release-News ergänzt und plain setTimeout() durch den ioBroker-Adapter-Timer ersetzt.",
@@ -117,7 +122,7 @@
         "pl": "Ulepszono formatowanie raportu na żywo i dodano brakujące kanały nadrzędne dla struktury obiektów.",
         "uk": "Покращено форматування live-звіту та додано відсутні батьківські канали для структури об’єктів.",
         "zh-cn": "改进了实时报告格式，并补充了对象结构验证所需的父级通道。"
-      },          
+      },
       "0.7.1": {
         "en": "Improved CI, integration tests and the release workflow with trusted npm publishing.",
         "de": "CI, Integrationstests und Release-Workflow mit vertrauenswürdigem npm-Publishing verbessert.",
