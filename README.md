@@ -99,6 +99,11 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.4 (2026-09-05)
+- Improved cleaning completion detection and reliable trail reset after finished cleaning runs.
+- Kept the cleaning trail during intermediate station stops between vacuuming and mopping.
+- Added improved live reporting for mopping preparation, mopping start and mop drying.
+
 ### 0.7.3 (2026-09-05)
 - Improved room transition reporting for target rooms, transit rooms and the return to the charging station.
 - Prevented transit rooms from being marked as selected while returning to the charging station.

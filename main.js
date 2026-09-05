@@ -1163,8 +1163,42 @@ class EcovacsMap extends utils.Adapter {
 
     async updateCleaningState(device, value) {
         const s = String(value || '').toLowerCase();
+        const states = await this.getAllSourceStates();
+
+        const cleanTypeId = `${device.prefix}.cleaninglog.current.cleanType`;
+        const cleanedSecondsId = `${device.prefix}.cleaninglog.current.cleanedSeconds`;
+
+        const cleaningLogAvailable =
+            !!states[cleanTypeId] &&
+            !!states[cleanedSecondsId];
+
+        const currentCleanType = String(
+            this.stateValue(states, cleanTypeId, '') || '',
+        ).trim();
+
+        const currentCleanedSeconds = Number(
+            this.stateValue(states, cleanedSecondsId, 0) || 0,
+        );
+
+        const cleaningStationActive = this.isTrue(
+            this.stateValue(states, `${device.prefix}.info.extended.cleaningStationActive`, false),
+        );
+
+        const cleaningLogActive =
+            cleaningLogAvailable &&
+            (currentCleanType !== '' || currentCleanedSeconds > 0);
+
+        const cleaningLogFinished =
+            cleaningLogAvailable &&
+            currentCleanType === '' &&
+            currentCleanedSeconds === 0;
         const cleaning = s.includes('clean') || s.includes('spot') || s.includes('auto') || s.includes('edge');
-        const finished = s.includes('charging') || s.includes('charge') || s.includes('dock') || s.includes('idle') || s.includes('stop') || s.includes('finish') || s.includes('complete') || s.includes('standby');
+        const finished =
+            s.includes('idle') ||
+            s.includes('stop') ||
+            s.includes('finish') ||
+            s.includes('complete') ||
+            s.includes('standby');
 
         if (cleaning && !device.wasCleaning) {
             device.trail = [];
@@ -1183,8 +1217,12 @@ class EcovacsMap extends utils.Adapter {
         // Reset every selected room only on the transition from an active
         // cleaning run to a finished/idle/docked state. This is deliberately
         // device-agnostic and therefore works for every detected Deebot.
-        if (finished && device.wasCleaning) {
+        if ((finished || cleaningLogFinished) && device.wasCleaning) {
             device.wasCleaning = false;
+            device.trail = [];
+            device.rawTrail = [];
+
+            await this.setStateAsync(`${device.key}.map.trail`, '', true);
             await this.resetRoomSelections(device);
             this.scheduleRebuild(device);
         }
@@ -1204,6 +1242,8 @@ class EcovacsMap extends utils.Adapter {
     classifyRobotStatus(value) {
         const s = String(value || '').toLowerCase();
         if (/return|returning|go.?home|homing|back.?to.?charge/.test(s)) return 'returning';
+        if (/washing/.test(s)) return 'washing';
+        if (/drying/.test(s)) return 'drying';
         if (/charg|dock/.test(s)) return 'charging';
         if (/pause/.test(s)) return 'paused';
         if (/clean|spot|auto|edge/.test(s)) return 'cleaning';
@@ -1284,7 +1324,20 @@ class EcovacsMap extends utils.Adapter {
         const room = this.displayRoomName(device, roomRaw);
         const targets = this.currentTargetRoomNames(device, states);
         const targetKey = targets.join('|');
+        const currentCleanType = String(
+            this.stateValue(states, `${device.prefix}.cleaninglog.current.cleanType`, '') || '',
+        ).trim();
 
+        const currentCleanedSeconds = Number(
+            this.stateValue(states, `${device.prefix}.cleaninglog.current.cleanedSeconds`, 0) || 0,
+        );
+
+        const cleaningStationActive = this.isTrue(
+            this.stateValue(states, `${device.prefix}.info.extended.cleaningStationActive`, false),
+        );
+
+        const cleaningLogActive = currentCleanType !== '' || currentCleanedSeconds > 0;
+        const cleaningLogFinished = currentCleanType === '' && currentCleanedSeconds === 0;
 
         if (!device.reportInitialized) {
             device.reportInitialized = true;
@@ -1319,16 +1372,74 @@ class EcovacsMap extends utils.Adapter {
 
         if (statusClass !== previousStatus) {
             if (statusClass === 'cleaning') {
-                await this.appendHistoryEvent(device, targets.length ? `Reinigung gestartet – fährt zu ${targets.join(', ')}` : 'Reinigung gestartet');
+                if (previousStatus === 'washing') {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Wischen startet',
+                    );
+                } else {
+                    await this.appendHistoryEvent(
+                        device,
+                        targets.length
+                            ? `Reinigung gestartet – fährt zu ${targets.join(', ')}`
+                            : 'Reinigung gestartet',
+                    );
+                }
+        
             } else if (statusClass === 'returning') {
-                await this.appendHistoryEvent(device, 'Fährt zur Ladestation zurück');
+                await this.appendHistoryEvent(
+                    device,
+                    'Fährt zur Ladestation zurück',
+                );
             } else if (statusClass === 'charging') {
-                if (previousStatus === 'returning' || previousStatus === 'cleaning') await this.appendHistoryEvent(device, 'An der Ladestation angekommen – lädt');
-                else await this.appendHistoryEvent(device, 'Lädt an der Ladestation');
+                if (previousStatus === 'returning' || previousStatus === 'cleaning') {
+                    await this.appendHistoryEvent(
+                        device,
+                        'An der Ladestation angekommen – lädt',
+                    );
+                } else {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Lädt an der Ladestation',
+                    );
+                }
             } else if (statusClass === 'paused') {
-                await this.appendHistoryEvent(device, 'Reinigung pausiert');
-            } else if (statusClass === 'idle' && ['cleaning', 'returning', 'paused'].includes(previousStatus)) {
-                await this.appendHistoryEvent(device, 'Reinigung beendet');
+                if (cleaningStationActive && cleaningLogActive) {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Wischen wird vorbereitet',
+                    );
+                } else {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Reinigung pausiert',
+                    );
+                }
+            } else if (statusClass === 'washing') {
+                if (cleaningLogActive) {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Wischen wird vorbereitet',
+                    );
+                } else if (cleaningLogFinished) {
+                    await this.appendHistoryEvent(
+                        device,
+                        'Reinigung beendet',
+                    );
+                }
+            } else if (statusClass === 'drying') {
+                await this.appendHistoryEvent(
+                    device,
+                    'Wischpads werden getrocknet',
+                );
+            } else if (
+                statusClass === 'idle' &&
+                ['cleaning', 'returning', 'paused', 'washing'].includes(previousStatus)
+            ) {
+                await this.appendHistoryEvent(
+                    device,
+                    'Reinigung beendet',
+                );
             }
         }
 
@@ -2142,6 +2253,19 @@ class EcovacsMap extends utils.Adapter {
                 await this.setStateAsync(`${base}.status.state`, status, true);
                 const states = await this.getAllSourceStates();
                 await this.refreshLiveReport(device, states);
+                this.scheduleRebuild(device);
+                return;
+            }
+            if (
+                id === `${device.prefix}.cleaninglog.current.cleanType` ||
+                id === `${device.prefix}.cleaninglog.current.cleanedSeconds`
+            ) {
+                const states = await this.getAllSourceStates();
+                const statusRaw = String(
+                    this.stateValue(states, `${device.prefix}.info.deviceStatus`, '') || '',
+                );
+
+                await this.updateCleaningState(device, statusRaw);
                 this.scheduleRebuild(device);
                 return;
             }

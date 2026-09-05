@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -53,6 +53,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.4": {
+        "en": "Improved cleaning completion detection, trail reset and washing/drying status reporting.",
+        "de": "Erkennung des Reinigungsendes, Zurücksetzen der Fahrspur sowie Statusmeldungen für Wischen und Trocknen verbessert.",
+        "ru": "Улучшено определение завершения уборки, сброс маршрута и отображение состояний мойки и сушки.",
+        "pt": "Melhorada a deteção do fim da limpeza, a reposição do percurso e os estados de lavagem e secagem.",
+        "nl": "Detectie van het einde van de reiniging, het wissen van de route en meldingen voor wassen en drogen verbeterd.",
+        "fr": "Amélioration de la détection de fin de nettoyage, de la réinitialisation du trajet et des états de lavage et de séchage.",
+        "it": "Migliorato il rilevamento della fine della pulizia, il reset del percorso e gli stati di lavaggio e asciugatura.",
+        "es": "Mejorada la detección del fin de la limpieza, el reinicio del recorrido y los estados de lavado y secado.",
+        "pl": "Ulepszono wykrywanie zakończenia sprzątania, reset trasy oraz raportowanie mycia i suszenia.",
+        "uk": "Покращено визначення завершення прибирання, скидання маршруту та відображення станів миття і сушіння.",
+        "zh-cn": "改进了清洁结束检测、轨迹重置以及清洗和烘干状态报告。"
+      },
       "0.7.3": {
         "en": "Improved room transition reporting and fixed room selection highlighting while returning to the charging station.",
         "de": "Raumwechsel-Berichte verbessert und falsche Raummarkierungen auf dem Rückweg zur Ladestation behoben.",
