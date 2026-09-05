@@ -54,17 +54,18 @@
     },
     "news": {
       "0.7.1": {
-       "en": "Improved CI, integration tests and the release workflow with trusted npm publishing.",
-       "de": "CI, Integrationstests und Release-Workflow mit vertrauenswürdigem npm-Publishing verbessert.",          "ru": "Улучшены CI, интеграционные тесты и процесс релиза с доверенной публикацией npm.",
-       "pt": "Melhorados o CI, os testes de integração e o fluxo de lançamento com publicação npm confiável.",
-       "nl": "CI, integratietests en de releaseworkflow met vertrouwde npm-publicatie verbeterd.",
-       "fr": "Amélioration du CI, des tests d’intégration et du processus de publication avec publication npm approuvée.",
-       "it": "Migliorati CI, test di integrazione e flusso di rilascio con pubblicazione npm attendibile.",
-       "es": "Mejorados el CI, las pruebas de integración y el flujo de publicación con publicación npm de confianza.",
-       "pl": "Ulepszono CI, testy integracyjne i proces wydania z zaufanym publikowaniem npm.",
-       "uk": "Покращено CI, інтеграційні тести та процес випуску з довіреною публікацією npm.",
-       "zh-cn": "改进了 CI、集成测试以及使用可信 npm 发布的发布流程。"
-    },
+        "en": "Improved CI, integration tests and the release workflow with trusted npm publishing.",
+        "de": "CI, Integrationstests und Release-Workflow mit vertrauenswürdigem npm-Publishing verbessert.",
+        "ru": "Улучшены CI, интеграционные тесты и процесс релиза с доверенной публикацией npm.",
+        "pt": "Melhorados o CI, os testes de integração e o fluxo de lançamento com publicação npm confiável.",
+        "nl": "CI, integratietests en de releaseworkflow met vertrouwde npm-publicatie verbeterd.",
+        "fr": "Amélioration du CI, des tests d’intégration et du processus de publication avec publication npm approuvée.",
+        "it": "Migliorati CI, test di integrazione e flusso di rilascio con pubblicazione npm attendibile.",
+        "es": "Mejorados el CI, las pruebas de integración y el flujo de publicación con publicación npm de confianza.",
+        "pl": "Ulepszono CI, testy integracyjne i proces wydania z zaufanym publikowaniem npm.",
+        "uk": "Покращено CI, інтеграційні тести та процес випуску з довіреною публікацією npm.",
+        "zh-cn": "改进了 CI、集成测试以及使用可信 npm 发布的发布流程。"
+      },
       "0.7.0": {
         "en": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
         "de": "Adapter für die öffentliche GitHub-/ioBroker-Veröffentlichung mit Repository-Metadaten, Dokumentation und CI-Struktur vorbereitet.",
