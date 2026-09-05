@@ -630,6 +630,11 @@ class EcovacsMap extends utils.Adapter {
         device.labelStrokeWidth = this.normalizeLabelStrokeWidth(savedLabelStrokeWidth);
         device.historyMaxEntries = this.normalizeHistoryMaxEntries(savedHistoryMaxEntries);
         device.historyEvents = String(savedHistoryEvents || '').split('\n').map(line => line.trim()).filter(Boolean).slice(-device.historyMaxEntries);
+        const liveLines = device.historyEvents
+            .slice(-5)
+            .map(entry => entry.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+/, ''));
+
+        device.reportCurrent = liveLines.join('\n');
         device.reportSequence = Number.isFinite(Number(savedReportSequence)) ? Number(savedReportSequence) : 0;
 
         await this.setStateAsync(`${base}.map.rotation`, device.rotation, true);
@@ -639,6 +644,7 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${base}.appearance.labelStrokeColor`, device.labelStrokeColor, true);
         await this.setStateAsync(`${base}.appearance.labelStrokeWidth`, device.labelStrokeWidth, true);
         await this.setStateAsync(`${base}.history.maxEntries`, device.historyMaxEntries, true);
+        await this.setStateAsync(`${base}.report.current`, device.reportCurrent, true);
         await this.setStateAsync(`${base}.history.events`, device.historyEvents.join('\n'), true);
         await this.setStateAsync(`${base}.history.count`, device.historyEvents.length, true);
         await this.setStateAsync(`${base}.report.sequence`, device.reportSequence, true);
@@ -1246,13 +1252,23 @@ class EcovacsMap extends utils.Adapter {
     async appendHistoryEvent(device, text) {
         const message = String(text || '').trim();
         if (!message) return;
+
         const now = new Date();
         const line = `${this.reportTimestamp(now)}  ${message}`;
+
         const last = device.historyEvents[device.historyEvents.length - 1] || '';
         if (last.endsWith(`  ${message}`)) return;
+
         device.historyEvents.push(line);
         device.historyEvents = device.historyEvents.slice(-device.historyMaxEntries);
+
+        const liveLines = device.historyEvents
+            .slice(-5)
+            .map(entry => entry.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+/, ''));
+
         device.reportSequence = Number(device.reportSequence || 0) + 1;
+
+        await this.setStateAsync(`${device.key}.report.current`, liveLines.join('\n'), true);
         await this.setStateAsync(`${device.key}.report.lastEvent`, message, true);
         await this.setStateAsync(`${device.key}.report.lastEventTime`, now.toISOString(), true);
         await this.setStateAsync(`${device.key}.report.sequence`, device.reportSequence, true);
@@ -1269,21 +1285,6 @@ class EcovacsMap extends utils.Adapter {
         const targets = this.currentTargetRoomNames(device, states);
         const targetKey = targets.join('|');
 
-        let current;
-        if (statusClass === 'cleaning') {
-            current = room ? `${device.name} reinigt ${room}` : targets.length ? `${device.name} fährt zu ${targets.join(', ')}` : `${device.name} reinigt`;
-        } else if (statusClass === 'returning') {
-            current = `${device.name} fährt zur Ladestation zurück`;
-        } else if (statusClass === 'charging') {
-            current = `${device.name} lädt an der Ladestation`;
-        } else if (statusClass === 'paused') {
-            current = `${device.name}: Reinigung pausiert`;
-        } else if (statusClass === 'idle') {
-            current = `${device.name} ist bereit`;
-        } else {
-            current = statusRaw ? `${device.name}: ${statusRaw}` : `${device.name}: Status unbekannt`;
-        }
-        await this.setReportCurrent(device, current);
 
         if (!device.reportInitialized) {
             device.reportInitialized = true;
