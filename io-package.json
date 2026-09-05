@@ -55,7 +55,16 @@
     "news": {
       "0.7.3": {
         "en": "Improved room transition reporting and fixed room selection highlighting while returning to the charging station.",
-        "de": "Raumwechsel-Berichte verbessert und falsche Raummarkierungen auf dem Rückweg zur Ladestation behoben."
+        "de": "Raumwechsel-Berichte verbessert und falsche Raummarkierungen auf dem Rückweg zur Ladestation behoben.",
+        "ru": "Улучшены сообщения о переходах между комнатами и исправлена подсветка выбранных комнат при возврате к зарядной станции.",
+        "pt": "Melhorados os relatórios de transição entre divisões e corrigida a marcação de divisões selecionadas durante o regresso à estação de carregamento.",
+        "nl": "Rapportage van kamerovergangen verbeterd en onjuiste markering van geselecteerde kamers tijdens de terugkeer naar het laadstation verholpen.",
+        "fr": "Amélioration des rapports de transition entre les pièces et correction du marquage des pièces sélectionnées lors du retour à la station de charge.",
+        "it": "Migliorati i report sui passaggi tra le stanze e corretta la selezione errata delle stanze durante il ritorno alla stazione di ricarica.",
+        "es": "Mejorados los informes de transición entre habitaciones y corregido el marcado incorrecto de habitaciones seleccionadas al regresar a la estación de carga.",
+        "pl": "Ulepszono raportowanie przejść między pomieszczeniami i naprawiono błędne oznaczanie wybranych pomieszczeń podczas powrotu do stacji ładowania.",
+        "uk": "Покращено звітування про переходи між кімнатами та виправлено неправильне позначення вибраних кімнат під час повернення до зарядної станції.",
+        "zh-cn": "改进了房间切换报告，并修复了返回充电座时房间被错误标记为已选择的问题。"
       },
       "0.7.2": {
         "en": "Improved live report formatting and added missing parent channels for object structure validation.",
