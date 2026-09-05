@@ -53,6 +53,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.6": {
+        "en": "Added missing release news and replaced plain setTimeout() with the ioBroker adapter timer helper.",
+        "de": "Fehlende Release-News ergänzt und plain setTimeout() durch den ioBroker-Adapter-Timer ersetzt.",
+        "ru": "Добавлены отсутствующие новости релиза и обычный setTimeout() заменён на таймер адаптера ioBroker.",
+        "pt": "Adicionadas as notas de versão em falta e substituído o setTimeout() simples pelo temporizador do adaptador ioBroker.",
+        "nl": "Ontbrekende release-notities toegevoegd en gewone setTimeout() vervangen door de ioBroker-adaptertimer.",
+        "fr": "Ajout des notes de version manquantes et remplacement de setTimeout() par le minuteur de l’adaptateur ioBroker.",
+        "it": "Aggiunte le note di rilascio mancanti e sostituito il normale setTimeout() con il timer dell’adapter ioBroker.",
+        "es": "Añadidas las notas de versión que faltaban y sustituido setTimeout() por el temporizador del adaptador ioBroker.",
+        "pl": "Dodano brakujące informacje o wydaniu i zastąpiono zwykłe setTimeout() timerem adaptera ioBroker.",
+        "uk": "Додано відсутні примітки до релізу та звичайний setTimeout() замінено таймером адаптера ioBroker.",
+        "zh-cn": "补充了缺失的发布说明，并将普通 setTimeout() 替换为 ioBroker 适配器计时器。"
+      },
       "0.7.5": {
         "en": "Fixed cleaning trail handling during the transition from cleaning to returning and improved device-agnostic completion detection.",
         "de": "Fahrspur beim Übergang von Reinigung zur Rückfahrt korrigiert und geräteunabhängige Erkennung des Reinigungsendes verbessert.",
