@@ -99,6 +99,11 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.5 (2026-09-05)
+- Fixed cleaning trail handling during the transition from cleaning to returning.
+- Prevented temporary `stopped` states from ending an active cleaning run too early.
+- Improved device-agnostic cleaning completion detection for different Deebot models.
+
 ### 0.7.4 (2026-09-05)
 - Improved cleaning completion detection and reliable trail reset after finished cleaning runs.
 - Kept the cleaning trail during intermediate station stops between vacuuming and mopping.
