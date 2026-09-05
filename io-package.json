@@ -53,6 +53,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.2": {
+        "en": "Improved live report formatting and added missing parent channels for object structure validation.",
+        "de": "Formatierung des Liveberichts verbessert und fehlende Parent-Channels für die Objektstruktur ergänzt.",
+        "ru": "Улучшено форматирование live-отчёта и добавлены отсутствующие родительские каналы для структуры объектов.",
+        "pt": "Melhorada a formatação do relatório ao vivo e adicionados canais principais ausentes para a estrutura de objetos.",
+        "nl": "Opmaak van het live-rapport verbeterd en ontbrekende bovenliggende kanalen voor de objectstructuur toegevoegd.",
+        "fr": "Amélioration du formatage du rapport en direct et ajout des canaux parents manquants pour la structure des objets.",
+        "it": "Migliorata la formattazione del rapporto live e aggiunti i canali padre mancanti per la struttura degli oggetti.",
+        "es": "Mejorado el formato del informe en directo y añadidos los canales padre que faltaban para la estructura de objetos.",
+        "pl": "Ulepszono formatowanie raportu na żywo i dodano brakujące kanały nadrzędne dla struktury obiektów.",
+        "uk": "Покращено форматування live-звіту та додано відсутні батьківські канали для структури об’єктів.",
+        "zh-cn": "改进了实时报告格式，并补充了对象结构验证所需的父级通道。"
+      },          
       "0.7.1": {
         "en": "Improved CI, integration tests and the release workflow with trusted npm publishing.",
         "de": "CI, Integrationstests und Release-Workflow mit vertrauenswürdigem npm-Publishing verbessert.",

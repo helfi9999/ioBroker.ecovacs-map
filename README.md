@@ -99,6 +99,12 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.2 (2026-09-05)
+
+- Improved live report formatting without date and time.
+- Kept full timestamps in cleaning history.
+- Added missing parent channels for object structure validation.
+
 ### 0.7.1 (2026-09-05)
 
 - Improved CI and integration test reliability.
