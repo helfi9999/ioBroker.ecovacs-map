@@ -53,6 +53,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.5": {
+        "en": "Fixed cleaning trail handling during the transition from cleaning to returning and improved device-agnostic completion detection.",
+        "de": "Fahrspur beim Übergang von Reinigung zur Rückfahrt korrigiert und geräteunabhängige Erkennung des Reinigungsendes verbessert.",
+        "ru": "Исправлено отображение маршрута при переходе от уборки к возврату и улучшено универсальное определение завершения уборки.",
+        "pt": "Corrigido o percurso durante a transição da limpeza para o regresso e melhorada a deteção de conclusão independente do dispositivo.",
+        "nl": "Reinigingsroute bij de overgang van reinigen naar terugkeren gecorrigeerd en apparaatonafhankelijke einddetectie verbeterd.",
+        "fr": "Correction du trajet lors du passage du nettoyage au retour et amélioration de la détection de fin indépendante de l’appareil.",
+        "it": "Corretto il percorso durante il passaggio dalla pulizia al ritorno e migliorato il rilevamento del completamento indipendente dal dispositivo.",
+        "es": "Corregido el recorrido durante la transición de limpieza a retorno y mejorada la detección de finalización independiente del dispositivo.",
+        "pl": "Naprawiono trasę podczas przejścia ze sprzątania do powrotu oraz ulepszono niezależne od urządzenia wykrywanie zakończenia.",
+        "uk": "Виправлено відображення маршруту під час переходу від прибирання до повернення та покращено незалежне від пристрою визначення завершення.",
+        "zh-cn": "修复了从清洁切换到返回充电座时的轨迹处理，并改进了与设备型号无关的清洁完成检测。"
+      },
       "0.7.4": {
         "en": "Improved cleaning completion detection, trail reset and washing/drying status reporting.",
         "de": "Erkennung des Reinigungsendes, Zurücksetzen der Fahrspur sowie Statusmeldungen für Wischen und Trocknen verbessert.",

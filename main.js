@@ -1239,7 +1239,7 @@ class EcovacsMap extends utils.Adapter {
 
             device.finishCheckSeconds = currentCleanedSeconds;
 
-            device.finishCheckTimer = setTimeout(async () => {
+            device.finishCheckTimer = this.setTimeout(async () => {
                 try {
                     const latestStates = await this.getAllSourceStates();
 
