@@ -57,6 +57,8 @@ class EcovacsMap extends utils.Adapter {
     }
 
     async ensureQaObjects() {
+        await this.ensureChannel('info', 'Info');
+
         await this.ensureState('control.selfTest', {
             name: 'Run ecovacs-map self test', type: 'boolean', role: 'button', read: false, write: true, def: false,
         });
@@ -543,6 +545,7 @@ class EcovacsMap extends utils.Adapter {
         await this.ensureChannel(`${base}.status`, 'Status');
         await this.ensureChannel(`${base}.control`, 'Control');
         await this.ensureChannel(`${base}.map`, 'Map');
+        await this.ensureChannel(`${base}.map.bounds`, 'Map bounds');
         await this.ensureChannel(`${base}.appearance`, 'Appearance');
         await this.ensureChannel(`${base}.report`, 'Live report');
         await this.ensureChannel(`${base}.history`, 'History');
