@@ -1291,6 +1291,25 @@ class EcovacsMap extends utils.Adapter {
             device.reportStatus = statusClass;
             device.reportRoom = room;
             device.reportTargets = targetKey;
+
+        if (!device.reportCurrent) {
+            let initialReport;
+            if (statusClass === 'cleaning') {
+                initialReport = room ? `Reinigt ${room}` : targets.length ? `Fährt zu ${targets.join(', ')}` : 'Reinigung läuft';
+            } else if (statusClass === 'returning') {
+                initialReport = 'Fährt zur Ladestation zurück';
+            } else if (statusClass === 'charging') {
+                initialReport = 'Lädt an der Ladestation';
+            } else if (statusClass === 'paused') {
+                initialReport = 'Reinigung pausiert';
+            } else if (statusClass === 'idle') {
+                initialReport = 'Bereit';
+            } else {
+                initialReport = statusRaw || 'Status unbekannt';
+            }
+            await this.setReportCurrent(device, initialReport);
+        }
+
             return;
         }
 

@@ -89,9 +89,10 @@ tests.integration(adapterDir, {
 
                     const liveReport = await waitFor(async () => {
                         const state = await getState(harness, 'ecovacs-map.0.TestBot.report.current');
-                        return state && typeof state.val === 'string' && state.val.includes('TestBot') ? state : null;
+                        return state && typeof state.val === 'string' && state.val.trim() ? state : null;
                     });
-                    assert.match(liveReport.val, /reinigt|fährt|lädt|bereit/);
+                    assert.match(liveReport.val, /Reinigt|Fährt|Lädt|Bereit|Reinigung/);
+                    assert.doesNotMatch(liveReport.val, /^\d{4}-\d{2}-\d{2}/);
 
                     const historyMax = await getState(harness, 'ecovacs-map.0.TestBot.history.maxEntries');
                     assert.equal(Number(historyMax?.val), 100);
