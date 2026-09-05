@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.2",
+    "version": "0.7.3",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -53,6 +53,10 @@
       "config": "json"
     },
     "news": {
+      "0.7.3": {
+        "en": "Improved room transition reporting and fixed room selection highlighting while returning to the charging station.",
+        "de": "Raumwechsel-Berichte verbessert und falsche Raummarkierungen auf dem Rückweg zur Ladestation behoben."
+      },
       "0.7.2": {
         "en": "Improved live report formatting and added missing parent channels for object structure validation.",
         "de": "Formatierung des Liveberichts verbessert und fehlende Parent-Channels für die Objektstruktur ergänzt.",

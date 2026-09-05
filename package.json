@@ -1,6 +1,6 @@
 {
   "name": "iobroker.ecovacs-map",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Interactive room map, live robot position, room selection and controls for ioBroker ecovacs-deebot",
   "author": "Helfi9999",
   "license": "MIT",

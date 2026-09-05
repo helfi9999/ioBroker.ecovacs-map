@@ -1332,8 +1332,24 @@ class EcovacsMap extends utils.Adapter {
             }
         }
 
-        if (statusClass === 'cleaning' && room && room !== previousRoom) {
-            await this.appendHistoryEvent(device, previousRoom ? `Raumwechsel – reinigt jetzt ${room}` : `Reinigt ${room}`);
+        if (room && room !== previousRoom) {
+            if (statusClass === 'cleaning') {
+                const isTargetRoom = !targets.length || targets.includes(room);
+
+                if (isTargetRoom) {
+                    await this.appendHistoryEvent(
+                        device,
+                        previousRoom ? `Raumwechsel – reinigt jetzt ${room}` : `Reinigt ${room}`,
+                    );
+                } else {
+                    await this.appendHistoryEvent(device, `Durchquert ${room}`);
+                }
+            } else if (statusClass === 'returning') {
+                await this.appendHistoryEvent(
+                    device,
+                    `Durchquert ${room} auf dem Weg zur Ladestation`,
+                );
+            }
         } else if (statusClass === 'cleaning' && !room && targetKey && targetKey !== previousTargets) {
             await this.appendHistoryEvent(device, `Fährt zu ${targets.join(', ')}`);
         }
@@ -1474,6 +1490,34 @@ class EcovacsMap extends utils.Adapter {
         states = states || await this.getAllSourceStates();
         let changed = false;
         const now = Date.now();
+
+        const statusRaw = String(
+            this.stateValue(states, `${device.prefix}.info.deviceStatus`, '') || '',
+        );
+        const statusClass = this.classifyRobotStatus(statusRaw);
+
+        if (statusClass === 'returning') {
+            for (const roomId of device.roomIds) {
+                const localKey = `${device.key}:${roomId}`;
+                const room = device.rooms.get(roomId);
+
+                this.localSelectionOverrides.delete(localKey);
+                this.selectionGuards.delete(localKey);
+                this.manualDeselections.delete(localKey);
+
+                if (room && room.selected !== false) changed = true;
+                if (room) room.selected = false;
+
+                await this.setStateAsync(
+                    `${device.key}.rooms.${roomId}.selected`,
+                    false,
+                    true,
+                );
+            }
+
+            return changed;
+        }
+
         const appSelected = this.detectAppSelectedRoomIds(device, states);
 
         for (const roomId of device.roomIds) {
@@ -2123,6 +2167,27 @@ class EcovacsMap extends utils.Adapter {
             if (selected) {
                 const roomId = selected[1];
                 const isSelected = this.isTrue(state.val);
+                if (isSelected) {
+                    const states = await this.getAllSourceStates();
+                    const statusRaw = String(
+                        this.stateValue(states, `${device.prefix}.info.deviceStatus`, '') || '',
+                    );
+                    const statusClass = this.classifyRobotStatus(statusRaw);
+
+                    if (statusClass === 'returning') {
+                        const room = device.rooms.get(roomId);
+                        if (room) room.selected = false;
+
+                        await this.setStateAsync(
+                            `${base}.rooms.${roomId}.selected`,
+                            false,
+                            true,
+                        );
+
+                        this.scheduleRebuild(device);
+                        return;
+                    }
+                }
                 const guardKey = `${device.key}:${roomId}`;
                 const manualBlock = this.manualDeselections.get(guardKey);
                 if (manualBlock) {
