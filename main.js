@@ -468,7 +468,8 @@ class EcovacsMap extends utils.Adapter {
 
             const device = {
                 key, name, prefix, mapId, roomIds,
-                rooms: new Map(), bounds: null, transform: null, trail: [], rawTrail: [], lastRawPosition: null, wasCleaning: false,
+                rooms: new Map(), bounds: null, transform: null, trail: [], rawTrail: [], lastRawPosition: null,
+                wasCleaning: false, finishCheckTimer: null, finishCheckSeconds: null,
                 image: '', robotX: 0, robotY: 0, angle: 0, rotation: 0, robotSize: 4.5, labelSize: 7, labelColor: '#ffffff', labelStrokeColor: '#000000', labelStrokeWidth: 1.6,
                 positionSource: '', rawPosition: '',
                 reportInitialized: false, reportStatus: '', reportRoom: '', reportTargets: '', reportSequence: 0, historyEvents: [], historyMaxEntries: 100,
@@ -1161,6 +1162,24 @@ class EcovacsMap extends utils.Adapter {
         await this.refreshLiveReport(device, states);
     }
 
+    async finishCleaningRun(device) {
+        if (!device.wasCleaning) return;
+
+        device.wasCleaning = false;
+        device.trail = [];
+        device.rawTrail = [];
+
+        if (device.finishCheckTimer) {
+            clearTimeout(device.finishCheckTimer);
+            device.finishCheckTimer = null;
+        }
+
+        device.finishCheckSeconds = null;
+
+        await this.setStateAsync(`${device.key}.map.trail`, '', true);
+        await this.resetRoomSelections(device);
+        this.scheduleRebuild(device);
+    }
     async updateCleaningState(device, value) {
         const s = String(value || '').toLowerCase();
         const states = await this.getAllSourceStates();
@@ -1195,10 +1214,79 @@ class EcovacsMap extends utils.Adapter {
         const cleaning = s.includes('clean') || s.includes('spot') || s.includes('auto') || s.includes('edge');
         const finished =
             s.includes('idle') ||
-            s.includes('stop') ||
             s.includes('finish') ||
             s.includes('complete') ||
             s.includes('standby');
+
+        const chargingLike =
+            s.includes('charging') ||
+            s.includes('charge') ||
+            s.includes('dock');
+
+        if (cleaning) {
+            if (device.finishCheckTimer) {
+                clearTimeout(device.finishCheckTimer);
+                device.finishCheckTimer = null;
+            }
+
+            device.finishCheckSeconds = null;
+        }
+
+        if (chargingLike && device.wasCleaning && !cleaningLogFinished) {
+            if (device.finishCheckTimer) {
+                clearTimeout(device.finishCheckTimer);
+            }
+
+            device.finishCheckSeconds = currentCleanedSeconds;
+
+            device.finishCheckTimer = setTimeout(async () => {
+                try {
+                    const latestStates = await this.getAllSourceStates();
+
+                    const latestStatus = String(
+                        this.stateValue(
+                            latestStates,
+                            `${device.prefix}.info.deviceStatus`,
+                            '',
+                        ) || '',
+                    ).toLowerCase();
+
+                    const latestSeconds = Number(
+                        this.stateValue(
+                            latestStates,
+                            cleanedSecondsId,
+                            0,
+                        ) || 0,
+                    );
+
+                    const stillCharging =
+                        latestStatus.includes('charging') ||
+                        latestStatus.includes('charge') ||
+                        latestStatus.includes('dock');
+
+                    const cleaningRestarted =
+                        latestStatus.includes('clean') ||
+                        latestStatus.includes('spot') ||
+                        latestStatus.includes('auto') ||
+                        latestStatus.includes('edge');
+
+                    if (
+                        device.wasCleaning &&
+                        stillCharging &&
+                        !cleaningRestarted &&
+                        latestSeconds === device.finishCheckSeconds
+                    ) {
+                        await this.finishCleaningRun(device);
+                    }
+                } catch (error) {
+                    this.log.debug(
+                        `${device.name}: finish check failed: ${error.message || error}`,
+                    );
+                } finally {
+                    device.finishCheckTimer = null;
+                }
+            }, 30000);
+        }
 
         if (cleaning && !device.wasCleaning) {
             device.trail = [];
@@ -1217,14 +1305,17 @@ class EcovacsMap extends utils.Adapter {
         // Reset every selected room only on the transition from an active
         // cleaning run to a finished/idle/docked state. This is deliberately
         // device-agnostic and therefore works for every detected Deebot.
-        if ((finished || cleaningLogFinished) && device.wasCleaning) {
-            device.wasCleaning = false;
-            device.trail = [];
-            device.rawTrail = [];
+        const statusClass = this.classifyRobotStatus(s);
 
-            await this.setStateAsync(`${device.key}.map.trail`, '', true);
-            await this.resetRoomSelections(device);
-            this.scheduleRebuild(device);
+        const logCanFinish =
+            cleaningLogFinished &&
+            ['charging', 'washing', 'drying'].includes(statusClass);
+
+        if (
+            (finished || logCanFinish) &&
+            device.wasCleaning
+        ) {
+            await this.finishCleaningRun(device);
         }
     }
 
@@ -1503,14 +1594,22 @@ class EcovacsMap extends utils.Adapter {
         device.robotY = pixel.y;
         device.angle = pos.angle;
 
-        const lastRaw = device.rawTrail[device.rawTrail.length - 1];
-        const lastPixel = lastRaw ? this.mapPoint(device, lastRaw.x, lastRaw.y) : null;
-        if (!lastPixel || Math.abs(lastPixel.x - pixel.x) > 1 || Math.abs(lastPixel.y - pixel.y) > 1) {
-            device.rawTrail.push({ x: pos.x, y: pos.y });
-            const limit = this.clampNumber(this.config.trailLimit, 500, 10, 5000);
-            while (device.rawTrail.length > limit) device.rawTrail.shift();
+        if (device.wasCleaning) {
+            const lastRaw = device.rawTrail[device.rawTrail.length - 1];
+            const lastPixel = lastRaw ? this.mapPoint(device, lastRaw.x, lastRaw.y) : null;
+
+            if (!lastPixel || Math.abs(lastPixel.x - pixel.x) > 1 || Math.abs(lastPixel.y - pixel.y) > 1) {
+                device.rawTrail.push({ x: pos.x, y: pos.y });
+
+                const limit = this.clampNumber(this.config.trailLimit, 500, 10, 5000);
+                while (device.rawTrail.length > limit) device.rawTrail.shift();
+            }
+
+            device.trail = device.rawTrail.map(p => this.mapPoint(device, p.x, p.y));
+        } else {
+            device.rawTrail = [];
+            device.trail = [];
         }
-        device.trail = device.rawTrail.map(p => this.mapPoint(device, p.x, p.y));
         const base = `${device.key}.map`;
         await this.setStateAsync(`${base}.robotX`, Number(pixel.x.toFixed(1)), true);
         await this.setStateAsync(`${base}.robotY`, Number(pixel.y.toFixed(1)), true);
