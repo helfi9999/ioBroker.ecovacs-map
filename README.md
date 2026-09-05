@@ -99,6 +99,10 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.6 (2026-09-05)
+- Added the missing `common.news` entry for version 0.7.5.
+- Replaced plain `setTimeout()` with the ioBroker adapter timer helper.
+
 ### 0.7.5 (2026-09-05)
 - Fixed cleaning trail handling during the transition from cleaning to returning.
 - Prevented temporary `stopped` states from ending an active cleaning run too early.
