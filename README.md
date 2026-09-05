@@ -99,6 +99,11 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.1 (2026-09-05)
+
+- Improved CI and integration test reliability.
+- Switched the release workflow to trusted npm publishing.
+
 ### 0.7.0
 - Prepared the adapter for public GitHub/ioBroker publication, including repository metadata, documentation and CI preparation.
 
