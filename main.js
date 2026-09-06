@@ -469,7 +469,7 @@ class EcovacsMap extends utils.Adapter {
             const device = {
                 key, name, prefix, mapId, roomIds,
                 rooms: new Map(), bounds: null, transform: null, trail: [], rawTrail: [], lastRawPosition: null,
-                wasCleaning: false, finishCheckTimer: null, finishCheckSeconds: null,
+                wasCleaning: false, finishCheckTimer: null, finishCheckSeconds: null, customArea: null, customAreaSupported: false, customAreaRunActive: false,
                 image: '', robotX: 0, robotY: 0, angle: 0, rotation: 0, robotSize: 4.5, labelSize: 7, labelColor: '#ffffff', labelStrokeColor: '#000000', labelStrokeWidth: 1.6,
                 positionSource: '', rawPosition: '',
                 reportInitialized: false, reportStatus: '', reportRoom: '', reportTargets: '', reportSequence: 0, historyEvents: [], historyMaxEntries: 100,
@@ -541,11 +541,21 @@ class EcovacsMap extends utils.Adapter {
         const savedHistoryMaxEntries = await this.readOwnValue([`${base}.history.maxEntries`], 100);
         const savedHistoryEvents = await this.readOwnValue([`${base}.history.events`], '');
         const savedReportSequence = await this.readOwnValue([`${base}.report.sequence`], 0);
+        const savedCustomAreaActive = await this.readOwnValue([`${base}.customArea.active`], false);
+        const savedCustomAreaValues = await this.readOwnValue([`${base}.customArea.values`], '');
+
+        const customAreaObject = await this.getForeignObjectAsync(`${device.prefix}.control.customArea`);
+        device.customAreaSupported =
+            customAreaObject?.type === 'state' &&
+            customAreaObject.common?.write === true;
+
+        device.customArea = String(savedCustomAreaValues || '').trim() || null;
 
         await this.setObjectNotExistsAsync(base, { type: 'device', common: { name: device.name }, native: {} });
         await this.ensureChannel(`${base}.status`, 'Status');
         await this.ensureChannel(`${base}.control`, 'Control');
         await this.ensureChannel(`${base}.map`, 'Map');
+        await this.ensureChannel(`${base}.customArea`, 'Custom area');
         await this.ensureChannel(`${base}.map.bounds`, 'Map bounds');
         await this.ensureChannel(`${base}.appearance`, 'Appearance');
         await this.ensureChannel(`${base}.report`, 'Live report');
@@ -586,6 +596,10 @@ class EcovacsMap extends utils.Adapter {
             ['control.lastAction', { name: 'Last action', type: 'string', role: 'text', read: true, write: false, def: '' }],
             ['control.lastSource', { name: 'Last source command state', type: 'string', role: 'text', read: true, write: false, def: '' }],
             ['control.status', { name: 'Command status', type: 'string', role: 'text', read: true, write: false, def: '' }],
+            
+            ['customArea.active', { name: 'Show custom area', type: 'boolean', role: 'switch', read: true, write: true, def: false }],
+            ['customArea.values', { name: 'Custom area coordinates', type: 'string', role: 'text', read: true, write: true, def: '' }],
+            ['customArea.start', { name: 'Start custom area cleaning', type: 'boolean', role: 'button', read: false, write: true, def: false }],
 
             ['map.svg', { name: 'SVG map without Ecovacs background', type: 'string', role: 'html', read: true, write: false, def: '' }],
             ['map.html', { name: 'HTML map for VIS without Ecovacs background image', type: 'string', role: 'html', read: true, write: false, def: '' }],
@@ -630,6 +644,7 @@ class EcovacsMap extends utils.Adapter {
         device.labelStrokeColor = this.normalizeCssColor(savedLabelStrokeColor, '#000000');
         device.labelStrokeWidth = this.normalizeLabelStrokeWidth(savedLabelStrokeWidth);
         device.historyMaxEntries = this.normalizeHistoryMaxEntries(savedHistoryMaxEntries);
+        device.customAreaActive = savedCustomAreaActive === true || savedCustomAreaActive === 'true' || savedCustomAreaActive === 1 || savedCustomAreaActive === '1';
         device.historyEvents = String(savedHistoryEvents || '').split('\n').map(line => line.trim()).filter(Boolean).slice(-device.historyMaxEntries);
         const liveLines = device.historyEvents
             .slice(-5)
@@ -638,6 +653,8 @@ class EcovacsMap extends utils.Adapter {
         device.reportCurrent = liveLines.join('\n');
         device.reportSequence = Number.isFinite(Number(savedReportSequence)) ? Number(savedReportSequence) : 0;
 
+        await this.setStateAsync(`${base}.customArea.active`, device.customAreaActive, true);
+        await this.setStateAsync(`${base}.customArea.values`, device.customArea || '', true);
         await this.setStateAsync(`${base}.map.rotation`, device.rotation, true);
         await this.setStateAsync(`${base}.appearance.robotSize`, device.robotSize, true);
         await this.setStateAsync(`${base}.appearance.labelSize`, device.labelSize, true);
@@ -885,6 +902,23 @@ class EcovacsMap extends utils.Adapter {
         };
     }
 
+    unmapPoint(device, x, y) {
+        const t = device.transform;
+        if (!t || !Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) {
+            return { x: 0, y: 0 };
+        }
+
+        x = Number(x);
+        y = Number(y);
+
+        if (t.mode === 'pixel') return { x, y };
+
+        return {
+            x: t.minX + (x - t.offX) / t.scale,
+            y: t.maxY - (y - t.offY) / t.scale,
+        };
+    }
+
     scalePairs(device, pairs) {
         if (!pairs.length || !device.transform) return [];
         return pairs.map(p => this.mapPoint(device, p.x, p.y));
@@ -963,11 +997,13 @@ class EcovacsMap extends utils.Adapter {
 
     async refreshDevice(device, states = null) {
         states = states || await this.getAllSourceStates();
+
         await this.refreshGeometry(device, states);
         await this.refreshMapImage(device, states);
         await this.refreshRuntime(device, states);
         await this.refreshRoomSelections(device, states);
         await this.updateCompatibilityStatus(device, states);
+
         await this.rebuildView(device);
     }
 
@@ -1175,6 +1211,12 @@ class EcovacsMap extends utils.Adapter {
         }
 
         device.finishCheckSeconds = null;
+
+        if (device.customAreaRunActive) {
+            device.customAreaRunActive = false;
+            device.customAreaActive = false;
+            await this.setStateAsync(`${device.key}.customArea.active`, false, true);
+        }
 
         await this.setStateAsync(`${device.key}.map.trail`, '', true);
         await this.resetRoomSelections(device);
@@ -1466,7 +1508,7 @@ class EcovacsMap extends utils.Adapter {
                 if (previousStatus === 'washing') {
                     await this.appendHistoryEvent(
                         device,
-                        'Wischen startet',
+                        'Reinigung wird fortgesetzt',
                     );
                 } else {
                     await this.appendHistoryEvent(
@@ -1796,6 +1838,16 @@ class EcovacsMap extends utils.Adapter {
             if (room) room.selected = selected;
             await this.setStateAsync(`${device.key}.rooms.${roomId}.selected`, selected, true);
         }
+
+        const anyRoomSelected = [...device.rooms.values()]
+            .some(room => room?.selected === true);
+
+        if (anyRoomSelected && device.customAreaActive && !device.customAreaRunActive) {
+            device.customAreaActive = false;
+            await this.setStateAsync(`${device.key}.customArea.active`, false, true);
+            changed = true;
+        }
+
         return changed;
     }
 
@@ -1967,6 +2019,242 @@ class EcovacsMap extends utils.Adapter {
             polygons.push(`<polygon points="${this.escapeXml(room.points)}" fill="${fillColor}" fill-opacity="${fillOpacity}" stroke="${strokeColor}" stroke-width="${strokeWidth}" vector-effect="non-scaling-stroke" style="cursor:pointer;pointer-events:auto" onclick="${this.escapeXml(click)}"><title>${this.escapeXml(room.name)}</title></polygon>`);
             addLabel(room.label || room.name, room.center, click);
         }
+        let customArea = '';
+
+        if (device.customAreaActive && device.customArea) {
+            const values = String(device.customArea)
+                .replace(/ /g, '')
+                .split(',')
+                .slice(0, 4)
+                .map(Number);
+
+            if (values.length === 4 && values.every(Number.isFinite)) {
+                const p1 = this.mapPoint(device, values[0], values[1]);
+                const p2 = this.mapPoint(device, values[2], values[3]);
+
+                const x = Math.min(p1.x, p2.x);
+                const y = Math.min(p1.y, p2.y);
+                const width = Math.abs(p2.x - p1.x);
+                const height = Math.abs(p2.y - p1.y);
+
+                const areaStateId = `${this.namespace}.${device.key}.customArea.values`;
+                const coordinateMode = device.transform?.mode === 'pixel' ? 'pixel' : 'mapped';
+                const scale = Number(device.transform?.scale) || 1;
+                const offX = Number(device.transform?.offX) || 0;
+                const offY = Number(device.transform?.offY) || 0;
+                const minRawX = Number(device.transform?.minX) || 0;
+                const maxRawY = Number(device.transform?.maxY) || 0;
+
+                const pointerDown = `
+                    if (event.button !== undefined && event.button !== 0) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var matrix = this.getScreenCTM();
+                    if (!matrix) return;
+
+                    var svg = this.ownerSVGElement;
+                    var point = svg.createSVGPoint();
+                    point.x = event.clientX;
+                    point.y = event.clientY;
+                    point = point.matrixTransform(matrix.inverse());
+
+                    var rect = this.querySelector('rect');
+                    if (!rect) return;
+
+                    this.__customAreaDrag = {
+                        pointerId: event.pointerId,
+                        mode: event.target.getAttribute('data-handle') || 'move',
+                        startX: point.x,
+                        startY: point.y,
+                        x: Number(rect.getAttribute('x')),
+                        y: Number(rect.getAttribute('y')),
+                        width: Number(rect.getAttribute('width')),
+                        height: Number(rect.getAttribute('height')),
+                        captureTarget: event.target
+                    };
+
+                    if (event.target.setPointerCapture) {
+                        event.target.setPointerCapture(event.pointerId);
+                    }
+                `;
+
+                const pointerMove = `
+                    var drag = this.__customAreaDrag;
+                    if (!drag || drag.pointerId !== event.pointerId) return;
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var matrix = this.getScreenCTM();
+                    if (!matrix) return;
+
+                    var svg = this.ownerSVGElement;
+                    var point = svg.createSVGPoint();
+                    point.x = event.clientX;
+                    point.y = event.clientY;
+                    point = point.matrixTransform(matrix.inverse());
+
+                    var dx = point.x - drag.startX;
+                    var dy = point.y - drag.startY;
+
+                    var left = drag.x;
+                    var top = drag.y;
+                    var right = drag.x + drag.width;
+                    var bottom = drag.y + drag.height;
+                    var minSize = 8;
+
+                    if (drag.mode === 'move') {
+                        left += dx;
+                        right += dx;
+                        top += dy;
+                        bottom += dy;
+                    } else {
+                        if (drag.mode.indexOf('w') >= 0) left += dx;
+                        if (drag.mode.indexOf('e') >= 0) right += dx;
+                        if (drag.mode.indexOf('n') >= 0) top += dy;
+                        if (drag.mode.indexOf('s') >= 0) bottom += dy;
+
+                        if (right - left < minSize) {
+                            if (drag.mode.indexOf('w') >= 0) left = right - minSize;
+                            else right = left + minSize;
+                        }
+
+                        if (bottom - top < minSize) {
+                            if (drag.mode.indexOf('n') >= 0) top = bottom - minSize;
+                            else bottom = top + minSize;
+                        }
+                    }
+
+                    var rect = this.querySelector('rect');
+                    rect.setAttribute('x', left);
+                    rect.setAttribute('y', top);
+                    rect.setAttribute('width', right - left);
+                    rect.setAttribute('height', bottom - top);
+
+                    var nw = this.querySelector('[data-handle="nw"]');
+                    var ne = this.querySelector('[data-handle="ne"]');
+                    var sw = this.querySelector('[data-handle="sw"]');
+                    var se = this.querySelector('[data-handle="se"]');
+
+                    nw.setAttribute('cx', left);
+                    nw.setAttribute('cy', top);
+
+                    ne.setAttribute('cx', right);
+                    ne.setAttribute('cy', top);
+
+                    sw.setAttribute('cx', left);
+                    sw.setAttribute('cy', bottom);
+
+                    se.setAttribute('cx', right);
+                    se.setAttribute('cy', bottom);
+                `;
+
+                const pointerUp = `
+                    var drag = this.__customAreaDrag;
+                    if (!drag || drag.pointerId !== event.pointerId) return;
+
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var rect = this.querySelector('rect');
+
+                    var left = Number(rect.getAttribute('x'));
+                    var top = Number(rect.getAttribute('y'));
+                    var right = left + Number(rect.getAttribute('width'));
+                    var bottom = top + Number(rect.getAttribute('height'));
+
+                    var mode = this.getAttribute('data-coordinate-mode');
+                    var scale = Number(this.getAttribute('data-scale')) || 1;
+                    var offX = Number(this.getAttribute('data-off-x')) || 0;
+                    var offY = Number(this.getAttribute('data-off-y')) || 0;
+                    var minRawX = Number(this.getAttribute('data-min-raw-x')) || 0;
+                    var maxRawY = Number(this.getAttribute('data-max-raw-y')) || 0;
+
+                    var rawX1;
+                    var rawY1;
+                    var rawX2;
+                    var rawY2;
+
+                    if (mode === 'pixel') {
+                        rawX1 = left;
+                        rawY1 = top;
+                        rawX2 = right;
+                        rawY2 = bottom;
+                    } else {
+                        rawX1 = minRawX + (left - offX) / scale;
+                        rawY1 = maxRawY - (top - offY) / scale;
+                        rawX2 = minRawX + (right - offX) / scale;
+                        rawY2 = maxRawY - (bottom - offY) / scale;
+                    }
+
+                    var value = [rawX1, rawY1, rawX2, rawY2].join(',');
+                    var stateId = this.getAttribute('data-state-id');
+
+                    if (window.vis && typeof vis.setValue === 'function') {
+                        vis.setValue(stateId, value);
+                    } else if (window.socket && typeof socket.emit === 'function') {
+                        socket.emit('setState', stateId, { val: value, ack: false });
+                    }
+
+                    if (drag.captureTarget && drag.captureTarget.releasePointerCapture) {
+                        try {
+                            drag.captureTarget.releasePointerCapture(event.pointerId);
+                        } catch (e) {}
+                    }
+
+                    this.__customAreaDrag = null;
+                `;
+
+                customArea = `<g class="ecovacs-custom-area"
+                    data-state-id="${this.escapeXml(areaStateId)}"
+                    data-coordinate-mode="${coordinateMode}"
+                    data-scale="${scale}"
+                    data-off-x="${offX}"
+                    data-off-y="${offY}"
+                    data-min-raw-x="${minRawX}"
+                    data-max-raw-y="${maxRawY}"
+                    style="pointer-events:auto;touch-action:none;user-select:none"
+                    onpointerdown="${this.escapeXml(pointerDown)}"
+                    onpointermove="${this.escapeXml(pointerMove)}"
+                    onpointerup="${this.escapeXml(pointerUp)}"
+                    onpointercancel="${this.escapeXml(pointerUp)}">
+
+                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}"
+                        width="${width.toFixed(1)}" height="${height.toFixed(1)}"
+                        fill="#1e88e5" fill-opacity="0.18"
+                        stroke="#1e88e5" stroke-width="2.5"
+                        stroke-dasharray="6 4"
+                        vector-effect="non-scaling-stroke"
+                        style="cursor:move;pointer-events:auto;touch-action:none"/>
+
+                    <circle data-handle="nw"
+                        cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5"
+                        fill="#ffffff" stroke="#1e88e5" stroke-width="2"
+                        vector-effect="non-scaling-stroke"
+                        style="cursor:nwse-resize;pointer-events:auto;touch-action:none"/>
+
+                    <circle data-handle="ne"
+                        cx="${(x + width).toFixed(1)}" cy="${y.toFixed(1)}" r="5"
+                        fill="#ffffff" stroke="#1e88e5" stroke-width="2"
+                        vector-effect="non-scaling-stroke"
+                        style="cursor:nesw-resize;pointer-events:auto;touch-action:none"/>
+
+                    <circle data-handle="sw"
+                        cx="${x.toFixed(1)}" cy="${(y + height).toFixed(1)}" r="5"
+                        fill="#ffffff" stroke="#1e88e5" stroke-width="2"
+                        vector-effect="non-scaling-stroke"
+                        style="cursor:nesw-resize;pointer-events:auto;touch-action:none"/>
+
+                    <circle data-handle="se"
+                        cx="${(x + width).toFixed(1)}" cy="${(y + height).toFixed(1)}" r="5"
+                        fill="#ffffff" stroke="#1e88e5" stroke-width="2"
+                        vector-effect="non-scaling-stroke"
+                        style="cursor:nwse-resize;pointer-events:auto;touch-action:none"/>
+                </g>`;
+            }
+        }
+
         const trail = device.trail.length ? `<polyline points="${device.trail.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#ff3b30" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" style="pointer-events:none"/>` : '';
         const robotSize = this.normalizeRobotSize(device.robotSize);
         const robotStroke = Math.max(1, Math.min(2, robotSize * 0.28));
@@ -1979,11 +2267,12 @@ class EcovacsMap extends utils.Adapter {
         const transform = this.rotationTransform(sourceViewport, rotation);
         device.svgViewport = viewport;
         device.sourceSvgViewport = sourceViewport;
-        const content = `${polygons.join('')}${labels.join('')}${trail}${robot}`;
+        const content = `${polygons.join('')}${labels.join('')}${customArea}${trail}${robot}`;
         const inheritedTextCss = inheritWidgetTextStyle
             ? ';color:inherit;font-family:inherit;font-style:inherit;font-variant:inherit;font-weight:inherit;font-size:inherit;line-height:inherit;letter-spacing:inherit;word-spacing:inherit;text-shadow:inherit'
             : '';
-        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewport.value}" preserveAspectRatio="xMidYMid meet" width="100%" height="100%" style="display:block;background:transparent${inheritedTextCss}"><g transform="${transform}">${content}</g></svg>`;
+        const touchAction = device.customAreaActive ? 'none' : 'auto';
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewport.value}" preserveAspectRatio="xMidYMid meet" width="100%" height="100%" style="display:block;background:transparent;touch-action:${touchAction}${inheritedTextCss}"><g transform="${transform}">${content}</g></svg>`;
     }
 
     async rebuildView(device) {
@@ -2213,6 +2502,112 @@ class EcovacsMap extends utils.Adapter {
             return;
         }
 
+        if (id === `${this.namespace}.${device.key}.customArea.active`) {
+            const active = this.isTrue(state.val);
+
+            if (active && !device.customAreaSupported) {
+                device.customAreaActive = false;
+                await this.setStateAsync(`${device.key}.customArea.active`, false, true);
+                this.log.warn(`${device.name}: custom area cleaning is not supported by the source adapter`);
+                this.scheduleRebuild(device);
+                return;
+            }
+
+            device.customAreaActive = active;
+
+            if (active) {
+                await this.resetRoomSelections(device);
+                const points = [];
+
+                for (const room of device.rooms.values()) {
+                    if (Array.isArray(room.scaledPairs)) {
+                        points.push(...room.scaledPairs);
+                    }
+                }
+
+                if (points.length) {
+                    const xs = points.map(point => Number(point.x)).filter(Number.isFinite);
+                    const ys = points.map(point => Number(point.y)).filter(Number.isFinite);
+
+                    if (xs.length && ys.length) {
+                        const minX = Math.min(...xs);
+                        const maxX = Math.max(...xs);
+                        const minY = Math.min(...ys);
+                        const maxY = Math.max(...ys);
+
+                        const width = maxX - minX;
+                        const height = maxY - minY;
+
+                        const left = minX + width * 0.375;
+                        const right = minX + width * 0.625;
+                        const top = minY + height * 0.375;
+                        const bottom = minY + height * 0.625;
+
+                        const p1 = this.unmapPoint(device, left, top);
+                        const p2 = this.unmapPoint(device, right, bottom);
+
+                        device.customArea = `${p1.x},${p1.y},${p2.x},${p2.y}`;
+                    }
+                }
+            }
+
+            await this.setStateAsync(`${device.key}.customArea.active`, device.customAreaActive, true);
+
+            if (device.customArea) {
+                await this.setStateAsync(`${device.key}.customArea.values`, device.customArea, true);
+            }
+
+            this.scheduleRebuild(device);
+            return;
+        }
+
+        if (id === `${this.namespace}.${device.key}.customArea.values`) {
+            const values = String(state.val || '')
+                .replace(/ /g, '')
+                .split(',')
+                .slice(0, 4)
+                .map(Number);
+
+            if (values.length !== 4 || !values.every(Number.isFinite)) {
+                this.log.warn(`${device.name}: invalid custom area coordinates: ${state.val}`);
+                await this.setStateAsync(`${device.key}.customArea.values`, device.customArea || '', true);
+                return;
+            }
+
+            device.customArea = values.join(',');
+            await this.setStateAsync(`${device.key}.customArea.values`, device.customArea, true);
+            this.scheduleRebuild(device);
+            return;
+        }
+
+        if (id === `${this.namespace}.${device.key}.customArea.start`) {
+            if (!this.isTrue(state.val)) return;
+
+            if (!device.customAreaSupported || !device.customArea) {
+                this.log.warn(`${device.name}: custom area start requested, but no supported custom area is available`);
+                await this.resetOwnButton(id);
+                return;
+            }
+
+            const values = String(device.customArea)
+                .replace(/ /g, '')
+                .split(',')
+                .slice(0, 4)
+                .map(Number);
+
+            if (values.length !== 4 || !values.every(Number.isFinite)) {
+                this.log.warn(`${device.name}: invalid custom area coordinates: ${device.customArea}`);
+                await this.resetOwnButton(id);
+                return;
+            }
+
+            const areaValues = values.join(',');
+
+            await this.setForeignStateAsync(`${device.prefix}.control.customArea`, areaValues, false);
+            device.customAreaRunActive = true;
+            await this.resetOwnButton(id);
+            return;
+        }
 
         if (id === `${this.namespace}.${device.key}.map.rotation`) {
             device.rotation = this.normalizeRotation(state.val);
@@ -2299,6 +2694,13 @@ class EcovacsMap extends utils.Adapter {
             const action = roomMatch[2];
             if (action === 'clean') {
                 if (!this.isTrue(state.val)) return;
+
+                if (device.customAreaActive) {
+                    device.customAreaActive = false;
+                    device.customAreaRunActive = false;
+                    await this.setStateAsync(`${device.key}.customArea.active`, false, true);
+                }
+
                 await this.cleanSingleRoom(device, roomId);
                 await this.resetOwnButton(id);
                 return;
@@ -2311,6 +2713,12 @@ class EcovacsMap extends utils.Adapter {
             this.localSelectionOverrides.set(localKey, { value: isSelected, until: now + 5000 });
             if (isSelected) {
                 this.manualDeselections.delete(localKey);
+
+                if (device.customAreaActive) {
+                    device.customAreaActive = false;
+                    device.customAreaRunActive = false;
+                    await this.setStateAsync(`${device.key}.customArea.active`, false, true);
+                }
             } else {
                 // Keep an explicit deselection stable through stale source echoes and
                 // the current-room inference. A genuinely new source selection after
