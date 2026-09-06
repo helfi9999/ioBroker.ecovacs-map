@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.7",
+    "version": "0.7.8",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -45,6 +45,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.8": {
+        "en": "Added interactive custom-area cleaning in VIS with mouse and touch resizing, automatic cleanup after completion, mutual exclusion with room selection, and improved neutral status reporting.",
+        "de": "Interaktive Custom-Area-Reinigung in VIS mit Maus- und Touch-Größenänderung ergänzt, automatische Ausblendung nach Abschluss, gegenseitiger Ausschluss mit Raumauswahl und neutralere Statusmeldungen.",
+        "ru": "Добавлена интерактивная уборка пользовательской зоны в VIS с изменением размера мышью и касанием, автоматическим скрытием после завершения, взаимоисключением с выбором комнат и более нейтральными сообщениями о статусе.",
+        "pt": "Adicionada limpeza interativa de área personalizada no VIS com redimensionamento por rato e toque, ocultação automática após a conclusão, exclusão mútua com a seleção de divisões e mensagens de estado mais neutras.",
+        "nl": "Interactieve aangepaste gebiedsreiniging in VIS toegevoegd met muis- en touch-resizing, automatisch verbergen na afloop, wederzijdse uitsluiting met kamerselectie en neutralere statusmeldingen.",
+        "fr": "Ajout du nettoyage interactif de zone personnalisée dans VIS avec redimensionnement à la souris et au toucher, masquage automatique après la fin, exclusion mutuelle avec la sélection des pièces et messages d’état plus neutres.",
+        "it": "Aggiunta la pulizia interattiva dell’area personalizzata in VIS con ridimensionamento tramite mouse e touch, nascondimento automatico al termine, esclusione reciproca con la selezione delle stanze e messaggi di stato più neutri.",
+        "es": "Añadida la limpieza interactiva de área personalizada en VIS con cambio de tamaño mediante ratón y toque, ocultación automática al finalizar, exclusión mutua con la selección de habitaciones y mensajes de estado más neutros.",
+        "pl": "Dodano interaktywne czyszczenie obszaru niestandardowego w VIS z możliwością zmiany rozmiaru myszą i dotykiem, automatycznym ukrywaniem po zakończeniu, wzajemnym wykluczaniem z wyborem pomieszczeń oraz bardziej neutralnymi komunikatami stanu.",
+        "uk": "Додано інтерактивне прибирання користувацької зони у VIS зі зміною розміру мишею та дотиком, автоматичним приховуванням після завершення, взаємовиключенням із вибором кімнат і нейтральнішими повідомленнями стану.",
+        "zh-cn": "新增 VIS 交互式自定义区域清扫，支持鼠标和触摸调整大小，清扫完成后自动隐藏，与房间选择互斥，并改进为更中性的状态提示。"
+      },
       "0.7.7": {
         "en": "Added the missing common.news entry for version 0.7.6.",
         "de": "Fehlenden common.news-Eintrag für Version 0.7.6 ergänzt.",
@@ -109,21 +122,7 @@
         "pl": "Ulepszono raportowanie przejść między pomieszczeniami i naprawiono błędne oznaczanie wybranych pomieszczeń podczas powrotu do stacji ładowania.",
         "uk": "Покращено звітування про переходи між кімнатами та виправлено неправильне позначення вибраних кімнат під час повернення до зарядної станції.",
         "zh-cn": "改进了房间切换报告，并修复了返回充电座时房间被错误标记为已选择的问题。"
-      },
-      "0.7.2": {
-        "en": "Improved live report formatting and added missing parent channels for object structure validation.",
-        "de": "Formatierung des Liveberichts verbessert und fehlende Parent-Channels für die Objektstruktur ergänzt.",
-        "ru": "Улучшено форматирование live-отчёта и добавлены отсутствующие родительские каналы для структуры объектов.",
-        "pt": "Melhorada a formatação do relatório ao vivo e adicionados canais principais ausentes para a estrutura de objetos.",
-        "nl": "Opmaak van het live-rapport verbeterd en ontbrekende bovenliggende kanalen voor de objectstructuur toegevoegd.",
-        "fr": "Amélioration du formatage du rapport en direct et ajout des canaux parents manquants pour la structure des objets.",
-        "it": "Migliorata la formattazione del rapporto live e aggiunti i canali padre mancanti per la struttura degli oggetti.",
-        "es": "Mejorado el formato del informe en directo y añadidos los canales padre que faltaban para la estructura de objetos.",
-        "pl": "Ulepszono formatowanie raportu na żywo i dodano brakujące kanały nadrzędne dla struktury obiektów.",
-        "uk": "Покращено форматування live-звіту та додано відсутні батьківські канали для структури об’єктів.",
-        "zh-cn": "改进了实时报告格式，并补充了对象结构验证所需的父级通道。"
       }
-      
     },
     "tier": 3,
     "licenseInformation": {
