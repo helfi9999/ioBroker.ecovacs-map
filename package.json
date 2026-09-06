@@ -30,6 +30,7 @@
     "TESTING.md"
   ],
   "scripts": {
+    "check:release": "npm test && npx @iobroker/repochecker helfi9999/ioBroker.ecovacs-map",
     "start": "node main.js",
     "check": "node --check main.js",
     "test:qa": "node test/qa.js && node --check main.js",
