@@ -99,6 +99,12 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.8 (2026-09-06)
+- Added interactive custom-area cleaning in VIS with mouse and touch resizing.
+- Added automatic hiding of the custom area after cleaning completes.
+- Made custom-area cleaning mutually exclusive with room selection.
+- Improved neutral cleaning status reporting.
+
 ### 0.7.7 (2026-09-05)
 - Added the missing `common.news` entry for version 0.7.6.
 
@@ -119,38 +125,6 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 ### 0.7.3 (2026-09-05)
 - Improved room transition reporting for target rooms, transit rooms and the return to the charging station.
 - Prevented transit rooms from being marked as selected while returning to the charging station.
-
-### 0.7.2 (2026-09-05)
-
-- Improved live report formatting without date and time.
-- Kept full timestamps in cleaning history.
-- Added missing parent channels for object structure validation.
-
-### 0.7.1 (2026-09-05)
-
-- Improved CI and integration test reliability.
-- Switched the release workflow to trusted npm publishing.
-
-### 0.7.0
-- Prepared the adapter for public GitHub/ioBroker publication, including repository metadata, documentation and CI preparation.
-
-### 0.6.7
-- Fixed Admin jsonConfig validation for the room configuration help text.
-
-### 0.6.6
-- Improved the Room ID(s) help text for single and merged room configuration.
-
-### 0.6.5
-- VIS HTML room labels can inherit text styling from the surrounding widget.
-
-### 0.6.4
-- Unified room naming and virtual room merges into one settings table.
-
-### 0.6.3
-- Added device-independent virtual room merges while preserving original Ecovacs SpotArea states and controls.
-
-### 0.6.2
-- Restored the proven 0.5.6 map detection behavior and added detailed room geometry diagnostics.
 
 For older changes, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 ## License
