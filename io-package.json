@@ -122,33 +122,8 @@
         "pl": "Ulepszono formatowanie raportu na żywo i dodano brakujące kanały nadrzędne dla struktury obiektów.",
         "uk": "Покращено форматування live-звіту та додано відсутні батьківські канали для структури об’єктів.",
         "zh-cn": "改进了实时报告格式，并补充了对象结构验证所需的父级通道。"
-      },
-      "0.7.1": {
-        "en": "Improved CI, integration tests and the release workflow with trusted npm publishing.",
-        "de": "CI, Integrationstests und Release-Workflow mit vertrauenswürdigem npm-Publishing verbessert.",
-        "ru": "Улучшены CI, интеграционные тесты и процесс релиза с доверенной публикацией npm.",
-        "pt": "Melhorados o CI, os testes de integração e o fluxo de lançamento com publicação npm confiável.",
-        "nl": "CI, integratietests en de releaseworkflow met vertrouwde npm-publicatie verbeterd.",
-        "fr": "Amélioration du CI, des tests d’intégration et du processus de publication avec publication npm approuvée.",
-        "it": "Migliorati CI, test di integrazione e flusso di rilascio con pubblicazione npm attendibile.",
-        "es": "Mejorados el CI, las pruebas de integración y el flujo de publicación con publicación npm de confianza.",
-        "pl": "Ulepszono CI, testy integracyjne i proces wydania z zaufanym publikowaniem npm.",
-        "uk": "Покращено CI, інтеграційні тести та процес випуску з довіреною публікацією npm.",
-        "zh-cn": "改进了 CI、集成测试以及使用可信 npm 发布的发布流程。"
-      },
-      "0.7.0": {
-        "en": "Prepared the adapter for public GitHub/ioBroker publication with repository metadata, documentation and CI structure.",
-        "de": "Adapter für die öffentliche GitHub-/ioBroker-Veröffentlichung mit Repository-Metadaten, Dokumentation und CI-Struktur vorbereitet.",
-        "ru": "Подготовлено к публичной публикации GitHub/ioBroker: метаданные, документация и CI.",
-        "pt": "Preparado para publicação pública no GitHub/ioBroker com metadados, documentação e CI.",
-        "nl": "Voorbereid voor openbare GitHub/ioBroker-publicatie met metadata, documentatie en CI.",
-        "fr": "Préparation à la publication publique GitHub/ioBroker avec métadonnées, documentation et CI.",
-        "it": "Preparato per la pubblicazione pubblica su GitHub/ioBroker con metadati, documentazione e CI.",
-        "es": "Preparado para la publicación pública en GitHub/ioBroker con metadatos, documentación y CI.",
-        "pl": "Przygotowano do publicznej publikacji GitHub/ioBroker wraz z metadanymi, dokumentacją i CI.",
-        "uk": "Підготовлено до публічної публікації GitHub/ioBroker: метадані, документація та CI.",
-        "zh-cn": "已为公开发布到 GitHub/ioBroker 准备元数据、文档和 CI。"
       }
+      
     },
     "tier": 3,
     "licenseInformation": {
