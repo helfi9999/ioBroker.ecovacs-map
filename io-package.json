@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.8",
+    "version": "0.7.9",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -45,6 +45,19 @@
       "config": "json"
     },
     "news": {
+      "0.7.9": {
+        "en": "Fixed transit room reporting to use configured room names instead of letter aliases and removed obsolete room label appearance states.",
+        "de": "Transit-Raummeldungen verwenden wieder die konfigurierten Raumnamen statt Buchstaben-Aliasse; außerdem wurden veraltete Darstellungs-States für Raumlabels entfernt.",
+        "ru": "Исправлено отображение проходных комнат: теперь используются настроенные названия комнат вместо буквенных обозначений; также удалены устаревшие параметры оформления подписей комнат.",
+        "pt": "Corrigido o relatório de divisões de passagem para usar os nomes configurados em vez de aliases por letras e removidos estados de aparência obsoletos das etiquetas das divisões.",
+        "nl": "Transitkamer-rapportage gebruikt weer de ingestelde kamernamen in plaats van letteraliassen en verouderde weergavestates voor kamerlabels zijn verwijderd.",
+        "fr": "Correction du rapport des pièces traversées afin d’utiliser les noms configurés au lieu d’alias par lettres, et suppression des anciens états d’apparence des libellés de pièces.",
+        "it": "Corretto il reporting delle stanze attraversate per usare i nomi configurati invece degli alias a lettere e rimossi gli stati di aspetto obsoleti delle etichette delle stanze.",
+        "es": "Corregidos los informes de habitaciones de paso para usar los nombres configurados en lugar de alias con letras y eliminados los estados de apariencia obsoletos de las etiquetas de habitaciones.",
+        "pl": "Naprawiono raportowanie pomieszczeń przejściowych tak, aby używało skonfigurowanych nazw zamiast aliasów literowych, oraz usunięto przestarzałe stany wyglądu etykiet pomieszczeń.",
+        "uk": "Виправлено звітування про прохідні кімнати: тепер використовуються налаштовані назви замість літерних псевдонімів; також видалено застарілі стани оформлення підписів кімнат.",
+        "zh-cn": "修复了经过房间的报告，现在使用已配置的房间名称而不是字母别名，并移除了已废弃的房间标签外观状态。"
+      },
       "0.7.8": {
         "en": "Added interactive custom-area cleaning in VIS with mouse and touch resizing, automatic cleanup after completion, mutual exclusion with room selection, and improved neutral status reporting.",
         "de": "Interaktive Custom-Area-Reinigung in VIS mit Maus- und Touch-Größenänderung ergänzt, automatische Ausblendung nach Abschluss, gegenseitiger Ausschluss mit Raumauswahl und neutralere Statusmeldungen.",
@@ -109,19 +122,6 @@
         "pl": "Ulepszono wykrywanie zakończenia sprzątania, reset trasy oraz raportowanie mycia i suszenia.",
         "uk": "Покращено визначення завершення прибирання, скидання маршруту та відображення станів миття і сушіння.",
         "zh-cn": "改进了清洁结束检测、轨迹重置以及清洗和烘干状态报告。"
-      },
-      "0.7.3": {
-        "en": "Improved room transition reporting and fixed room selection highlighting while returning to the charging station.",
-        "de": "Raumwechsel-Berichte verbessert und falsche Raummarkierungen auf dem Rückweg zur Ladestation behoben.",
-        "ru": "Улучшены сообщения о переходах между комнатами и исправлена подсветка выбранных комнат при возврате к зарядной станции.",
-        "pt": "Melhorados os relatórios de transição entre divisões e corrigida a marcação de divisões selecionadas durante o regresso à estação de carregamento.",
-        "nl": "Rapportage van kamerovergangen verbeterd en onjuiste markering van geselecteerde kamers tijdens de terugkeer naar het laadstation verholpen.",
-        "fr": "Amélioration des rapports de transition entre les pièces et correction du marquage des pièces sélectionnées lors du retour à la station de charge.",
-        "it": "Migliorati i report sui passaggi tra le stanze e corretta la selezione errata delle stanze durante il ritorno alla stazione di ricarica.",
-        "es": "Mejorados los informes de transición entre habitaciones y corregido el marcado incorrecto de habitaciones seleccionadas al regresar a la estación de carga.",
-        "pl": "Ulepszono raportowanie przejść między pomieszczeniami i naprawiono błędne oznaczanie wybranych pomieszczeń podczas powrotu do stacji ładowania.",
-        "uk": "Покращено звітування про переходи між кімнатами та виправлено неправильне позначення вибраних кімнат під час повернення до зарядної станції.",
-        "zh-cn": "改进了房间切换报告，并修复了返回充电座时房间被错误标记为已选择的问题。"
       }
     },
     "tier": 3,

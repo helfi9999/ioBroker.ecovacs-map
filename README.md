@@ -99,6 +99,10 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.7.9 (2026-09-07)
+- Fixed transit room reporting so configured room names are shown instead of letter aliases.
+- Removed obsolete room label appearance states that are no longer needed in VIS.
+
 ### 0.7.8 (2026-09-06)
 - Added interactive custom-area cleaning in VIS with mouse and touch resizing.
 - Added automatic hiding of the custom area after cleaning completes.
@@ -121,10 +125,6 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 - Improved cleaning completion detection and reliable trail reset after finished cleaning runs.
 - Kept the cleaning trail during intermediate station stops between vacuuming and mopping.
 - Added improved live reporting for mopping preparation, mopping start and mop drying.
-
-### 0.7.3 (2026-09-05)
-- Improved room transition reporting for target rooms, transit rooms and the return to the charging station.
-- Prevented transit rooms from being marked as selected while returning to the charging station.
 
 For older changes, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 ## License
