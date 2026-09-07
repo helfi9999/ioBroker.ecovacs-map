@@ -261,7 +261,9 @@ class EcovacsMap extends utils.Adapter {
 
     async resolveRoomName(device, roomId, states) {
         const detected = this.detectRoomNameDetails(device.prefix, device.mapId, roomId, states);
-        if (!this.isGenericRoomName(detected.name, roomId)) return detected;
+        if (!this.isGenericRoomName(detected.name, roomId)) {
+            return { ...detected, aliases: [detected.name] };
+        }
 
         const base = `${device.prefix}.map.${device.mapId}.spotAreas.${roomId}`;
         const objectIds = [base, `${base}.roomName`, `${base}.areaName`, `${base}.name`, `${base}.label`, `${base}.spotAreaName`];
@@ -270,11 +272,11 @@ class EcovacsMap extends utils.Adapter {
                 const obj = await this.getForeignObjectAsync(id);
                 const name = this.objectCommonName(obj);
                 if (name && !this.isGenericRoomName(name, roomId) && !/^(name|label|room name|area name|spot area name)$/i.test(name)) {
-                    return { name, id: `${id} [object.common.name]` };
+                    return { name, id: `${id} [object.common.name]`, aliases: [detected.name] };
                 }
             } catch { /* optional metadata only */ }
         }
-        return detected;
+        return { ...detected, aliases: [detected.name] };
     }
 
     getUnifiedRoomConfigRows() {
@@ -470,7 +472,7 @@ class EcovacsMap extends utils.Adapter {
                 key, name, prefix, mapId, roomIds,
                 rooms: new Map(), bounds: null, transform: null, trail: [], rawTrail: [], lastRawPosition: null,
                 wasCleaning: false, finishCheckTimer: null, finishCheckSeconds: null, customArea: null, customAreaSupported: false, customAreaRunActive: false,
-                image: '', robotX: 0, robotY: 0, angle: 0, rotation: 0, robotSize: 4.5, labelSize: 7, labelColor: '#ffffff', labelStrokeColor: '#000000', labelStrokeWidth: 1.6,
+                image: '', robotX: 0, robotY: 0, angle: 0, rotation: 0, robotSize: 4.5,
                 positionSource: '', rawPosition: '',
                 reportInitialized: false, reportStatus: '', reportRoom: '', reportTargets: '', reportSequence: 0, historyEvents: [], historyMaxEntries: 100,
             };
@@ -534,10 +536,6 @@ class EcovacsMap extends utils.Adapter {
         // before the old tree is removed.
         const savedRotation = await this.readOwnValue([`${base}.map.rotation`, `${legacyBase}.map.rotation`], 0);
         const savedRobotSize = await this.readOwnValue([`${base}.appearance.robotSize`, `${legacyBase}.map.robotSize`], 4.5);
-        const savedLabelSize = await this.readOwnValue([`${base}.appearance.labelSize`, `${legacyBase}.map.labelSize`], 7);
-        const savedLabelColor = await this.readOwnValue([`${base}.appearance.labelColor`, `${legacyBase}.map.labelColor`], '#ffffff');
-        const savedLabelStrokeColor = await this.readOwnValue([`${base}.appearance.labelStrokeColor`, `${legacyBase}.map.labelStrokeColor`], '#000000');
-        const savedLabelStrokeWidth = await this.readOwnValue([`${base}.appearance.labelStrokeWidth`, `${legacyBase}.map.labelStrokeWidth`], 1.6);
         const savedHistoryMaxEntries = await this.readOwnValue([`${base}.history.maxEntries`], 100);
         const savedHistoryEvents = await this.readOwnValue([`${base}.history.events`], '');
         const savedReportSequence = await this.readOwnValue([`${base}.report.sequence`], 0);
@@ -625,10 +623,6 @@ class EcovacsMap extends utils.Adapter {
             ['history.clear', { name: 'Clear cleaning event history', type: 'boolean', role: 'button', read: false, write: true, def: false }],
 
             ['appearance.robotSize', { name: 'Robot marker radius', type: 'number', role: 'level', unit: 'px', read: true, write: true, def: 4.5, min: 2, max: 20, step: 0.5 }],
-            ['appearance.labelSize', { name: 'Room label font size', type: 'number', role: 'level', unit: 'px', read: true, write: true, def: 7, min: 4, max: 24, step: 0.5 }],
-            ['appearance.labelColor', { name: 'Room label text color (CSS: hex/rgb/rgba/name)', type: 'string', role: 'text', read: true, write: true, def: '#ffffff' }],
-            ['appearance.labelStrokeColor', { name: 'Room label outline color (CSS: hex/rgb/rgba/name)', type: 'string', role: 'text', read: true, write: true, def: '#000000' }],
-            ['appearance.labelStrokeWidth', { name: 'Room label outline width', type: 'number', role: 'level', unit: 'px', read: true, write: true, def: 1.6, min: 0, max: 10, step: 0.1 }],
         ];
         for (const [suffix, common] of defs) await this.ensureState(`${base}.${suffix}`, common);
 
@@ -639,10 +633,6 @@ class EcovacsMap extends utils.Adapter {
 
         device.rotation = this.normalizeRotation(savedRotation);
         device.robotSize = this.normalizeRobotSize(savedRobotSize);
-        device.labelSize = this.normalizeLabelSize(savedLabelSize);
-        device.labelColor = this.normalizeCssColor(savedLabelColor, '#ffffff');
-        device.labelStrokeColor = this.normalizeCssColor(savedLabelStrokeColor, '#000000');
-        device.labelStrokeWidth = this.normalizeLabelStrokeWidth(savedLabelStrokeWidth);
         device.historyMaxEntries = this.normalizeHistoryMaxEntries(savedHistoryMaxEntries);
         device.customAreaActive = savedCustomAreaActive === true || savedCustomAreaActive === 'true' || savedCustomAreaActive === 1 || savedCustomAreaActive === '1';
         device.historyEvents = String(savedHistoryEvents || '').split('\n').map(line => line.trim()).filter(Boolean).slice(-device.historyMaxEntries);
@@ -657,10 +647,6 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${base}.customArea.values`, device.customArea || '', true);
         await this.setStateAsync(`${base}.map.rotation`, device.rotation, true);
         await this.setStateAsync(`${base}.appearance.robotSize`, device.robotSize, true);
-        await this.setStateAsync(`${base}.appearance.labelSize`, device.labelSize, true);
-        await this.setStateAsync(`${base}.appearance.labelColor`, device.labelColor, true);
-        await this.setStateAsync(`${base}.appearance.labelStrokeColor`, device.labelStrokeColor, true);
-        await this.setStateAsync(`${base}.appearance.labelStrokeWidth`, device.labelStrokeWidth, true);
         await this.setStateAsync(`${base}.history.maxEntries`, device.historyMaxEntries, true);
         await this.setStateAsync(`${base}.report.current`, device.reportCurrent, true);
         await this.setStateAsync(`${base}.history.events`, device.historyEvents.join('\n'), true);
@@ -670,7 +656,15 @@ class EcovacsMap extends utils.Adapter {
         // Cleanup legacy states from earlier development versions.
         // The SVG/HTML map does not use the original Ecovacs image and there is
         // deliberately no automatic loadMapImage polling anymore.
-        for (const obsolete of [`${base}.map.image`, `${base}.map.imageSource`, `${base}.map.autoRefresh`]) {
+        for (const obsolete of [
+            `${base}.map.image`,
+            `${base}.map.imageSource`,
+            `${base}.map.autoRefresh`,
+            `${base}.appearance.labelSize`,
+            `${base}.appearance.labelColor`,
+            `${base}.appearance.labelStrokeColor`,
+            `${base}.appearance.labelStrokeWidth`,
+        ]) {
             try {
                 const obj = await this.getObjectAsync(obsolete);
                 if (obj) await this.delObjectAsync(obsolete);
@@ -1092,6 +1086,7 @@ class EcovacsMap extends utils.Adapter {
             const rb = `${device.key}.rooms.${roomId}`;
             const roomNameInfo = await this.resolveRoomName(device, roomId, states);
             const sourceRoomName = roomNameInfo.name;
+            const roomAliases = Array.isArray(roomNameInfo.aliases) ? roomNameInfo.aliases : [];
             const customRoomName = this.getRoomNameOverride(device, roomId);
             const roomName = customRoomName || sourceRoomName;
             const roomLabel = this.mapRoomLabel(roomName, roomId);
@@ -1103,7 +1098,7 @@ class EcovacsMap extends utils.Adapter {
             try { await this.extendObjectAsync(rb, { common: { name: roomName } }); } catch { /* cosmetic only */ }
             const found = roomData.find(room => room.roomId === roomId);
             if (!found) {
-                device.rooms.set(roomId, { name: roomName, sourceName: sourceRoomName, label: roomLabel, rawPairs: [], scaledPairs: [], points: '', source: '', selected: device.rooms.get(roomId)?.selected || false, center: { x: 0, y: 0 } });
+                device.rooms.set(roomId, { name: roomName, sourceName: sourceRoomName, aliases: roomAliases, label: roomLabel, rawPairs: [], scaledPairs: [], points: '', source: '', selected: device.rooms.get(roomId)?.selected || false, center: { x: 0, y: 0 } });
                 continue;
             }
             const rawPairs = this.cleanPolygonPairs(found.pairs);
@@ -1112,7 +1107,7 @@ class EcovacsMap extends utils.Adapter {
             const points = scaled.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
             const raw = rawPairs.map(p => `${p.x},${p.y}`).join(' ');
             device.rooms.set(roomId, {
-                name: roomName, sourceName: sourceRoomName, label: roomLabel, rawPairs, scaledPairs: scaled, points, source: found.id,
+                name: roomName, sourceName: sourceRoomName, aliases: roomAliases, label: roomLabel, rawPairs, scaledPairs: scaled, points, source: found.id,
                 selected: device.rooms.get(roomId)?.selected || false, center,
             });
             await this.setStateAsync(`${rb}.polygon`, points, true);
@@ -1389,7 +1384,7 @@ class EcovacsMap extends utils.Adapter {
         if (!raw) return '';
         const normalized = this.normalizeRoomText(raw);
         for (const [roomId, room] of device.rooms.entries()) {
-            const candidates = [room?.name, room?.sourceName, room?.label, roomId]
+            const candidates = [room?.name, room?.sourceName, room?.label, ...(room?.aliases || []), roomId]
                 .map(value => this.normalizeRoomText(value));
             if (candidates.includes(normalized)) {
                 const merge = this.roomMergeForId(device, roomId);
@@ -1912,32 +1907,7 @@ class EcovacsMap extends utils.Adapter {
         return { minX, minY, width, height, value };
     }
 
-    normalizeCssColor(value, fallback = '#ffffff') {
-        const color = String(value || '').trim();
-        if (!color) return fallback;
-        if (/^#[0-9a-fA-F]{3,8}$/.test(color)) return color;
-        if (/^[a-zA-Z]{3,32}$/.test(color)) return color;
 
-        const rgb = color.match(/^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/i);
-        if (rgb) {
-            const values = rgb.slice(1).map(Number);
-            if (values.every(v => v >= 0 && v <= 255)) return color;
-        }
-
-        const rgba = color.match(/^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(0(?:\.\d+)?|1(?:\.0+)?)\s*\)$/i);
-        if (rgba) {
-            const rgbValues = rgba.slice(1, 4).map(Number);
-            const alpha = Number(rgba[4]);
-            if (rgbValues.every(v => v >= 0 && v <= 255) && alpha >= 0 && alpha <= 1) return color;
-        }
-        return fallback;
-    }
-
-    normalizeLabelStrokeWidth(value) {
-        const n = Number(value);
-        if (!Number.isFinite(n)) return 1.6;
-        return Math.round(Math.max(0, Math.min(10, n)) * 10) / 10;
-    }
 
     normalizeRobotSize(value) {
         const n = Number(value);
@@ -1945,11 +1915,6 @@ class EcovacsMap extends utils.Adapter {
         return Math.round(Math.max(2, Math.min(20, n)) * 2) / 2;
     }
 
-    normalizeLabelSize(value) {
-        const n = Number(value);
-        if (!Number.isFinite(n)) return 7;
-        return Math.round(Math.max(4, Math.min(24, n)) * 2) / 2;
-    }
 
     lightenHex(color, amount = 0.42) {
         const m = String(color || '').trim().match(/^#([0-9a-f]{6})$/i);
@@ -1983,7 +1948,7 @@ class EcovacsMap extends utils.Adapter {
             const labelTransform = labelRotation ? ` transform="rotate(${labelRotation} ${center.x.toFixed(1)} ${center.y.toFixed(1)})"` : '';
             const labelStyle = inheritWidgetTextStyle
                 ? 'cursor:pointer;pointer-events:auto;user-select:none;fill:currentColor;stroke:none;font-family:inherit;font-style:inherit;font-variant:inherit;font-weight:inherit;font-size:inherit;line-height:inherit;letter-spacing:inherit;word-spacing:inherit;text-shadow:inherit'
-                : `cursor:pointer;pointer-events:auto;user-select:none;font-family:sans-serif;font-weight:600;font-size:${this.normalizeLabelSize(device.labelSize)}px;fill:${this.escapeXml(device.labelColor || '#ffffff')};stroke:${this.escapeXml(device.labelStrokeColor || '#000000')};stroke-width:${this.normalizeLabelStrokeWidth(device.labelStrokeWidth)};paint-order:stroke`;
+                : 'cursor:pointer;pointer-events:auto;user-select:none;font-family:sans-serif;font-weight:600;font-size:7px;fill:#ffffff;stroke:#000000;stroke-width:1.6;paint-order:stroke';
             labels.push(`<text class="ecovacs-room-label" x="${center.x.toFixed(1)}" y="${center.y.toFixed(1)}"${labelTransform} text-anchor="middle" dominant-baseline="middle" vector-effect="non-scaling-stroke" style="${labelStyle}" onclick="${this.escapeXml(click)}">${this.escapeXml(name)}</text>`);
         };
 
@@ -2618,30 +2583,6 @@ class EcovacsMap extends utils.Adapter {
         if (id === `${this.namespace}.${device.key}.appearance.robotSize`) {
             device.robotSize = this.normalizeRobotSize(state.val);
             await this.setStateAsync(`${device.key}.appearance.robotSize`, device.robotSize, true);
-            this.scheduleRebuild(device);
-            return;
-        }
-        if (id === `${this.namespace}.${device.key}.appearance.labelSize`) {
-            device.labelSize = this.normalizeLabelSize(state.val);
-            await this.setStateAsync(`${device.key}.appearance.labelSize`, device.labelSize, true);
-            this.scheduleRebuild(device);
-            return;
-        }
-        if (id === `${this.namespace}.${device.key}.appearance.labelColor`) {
-            device.labelColor = this.normalizeCssColor(state.val, '#ffffff');
-            await this.setStateAsync(`${device.key}.appearance.labelColor`, device.labelColor, true);
-            this.scheduleRebuild(device);
-            return;
-        }
-        if (id === `${this.namespace}.${device.key}.appearance.labelStrokeColor`) {
-            device.labelStrokeColor = this.normalizeCssColor(state.val, '#000000');
-            await this.setStateAsync(`${device.key}.appearance.labelStrokeColor`, device.labelStrokeColor, true);
-            this.scheduleRebuild(device);
-            return;
-        }
-        if (id === `${this.namespace}.${device.key}.appearance.labelStrokeWidth`) {
-            device.labelStrokeWidth = this.normalizeLabelStrokeWidth(state.val);
-            await this.setStateAsync(`${device.key}.appearance.labelStrokeWidth`, device.labelStrokeWidth, true);
             this.scheduleRebuild(device);
             return;
         }
