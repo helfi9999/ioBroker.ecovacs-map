@@ -28,7 +28,7 @@
       "uk": "Інтерактивна SVG/HTML-карта кімнат, поточне положення робота, вибір кімнат і керування для ecovacs-deebot.",
       "zh-cn": "用于 ecovacs-deebot 的交互式 SVG/HTML 房间地图、机器人实时位置、房间选择和控制。"
     },
-    "authors": ["Helfi9999"],
+    "authors": ["Helfi9999 <43864283+helfi9999@users.noreply.github.com>"],
     "keywords": ["ecovacs", "deebot", "map", "vacuum", "vis"],
     "platform": "Javascript/Node.js",
     "icon": "ecovacs-map.png",
