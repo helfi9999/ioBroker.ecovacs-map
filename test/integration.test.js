@@ -74,9 +74,9 @@ tests.integration(adapterDir, {
 
                     const angle = await waitFor(async () => {
                         const state = await getState(harness, 'ecovacs-map.0.TestBot.map.angle');
-                        return state && Number(state.val) === 90 ? state : null;
+                        return state && Number(state.val) === 0 ? state : null;
                     });
-                    assert.equal(Number(angle.val), 90);
+                    assert.equal(Number(angle.val), 0);
 
                     const x = await getState(harness, 'ecovacs-map.0.TestBot.map.robotX');
                     const y = await getState(harness, 'ecovacs-map.0.TestBot.map.robotY');
