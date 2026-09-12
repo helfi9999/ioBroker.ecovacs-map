@@ -2795,10 +2795,7 @@ class EcovacsMap extends utils.Adapter {
         const pixel = this.mapPoint(device, pos.x, pos.y);
         device.robotX = pixel.x;
         device.robotY = pixel.y;
-        const mappedAngle =
-            device.transform && device.transform.mode === 'world'
-                ? 90 - pos.angle
-                : pos.angle;
+        const mappedAngle = device.transform && device.transform.mode === 'world' ? 90 - pos.angle : pos.angle;
         device.angle = mappedAngle;
 
         if (device.wasCleaning) {
