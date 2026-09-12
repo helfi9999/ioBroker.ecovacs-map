@@ -131,4 +131,4 @@ For older changes, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 MIT License. See [LICENSE](LICENSE).
 
-Copyright (c) 2026 Helfi9999 <43864283+helfi9999@users.noreply.github.com>
+Copyright (c) 2026 Helfi9999 <helfi9999@gmail.com>
