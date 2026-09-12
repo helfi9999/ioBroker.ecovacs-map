@@ -2795,7 +2795,11 @@ class EcovacsMap extends utils.Adapter {
         const pixel = this.mapPoint(device, pos.x, pos.y);
         device.robotX = pixel.x;
         device.robotY = pixel.y;
-        device.angle = pos.angle;
+        const mappedAngle =
+            device.transform && device.transform.mode === 'world'
+                ? 90 - pos.angle
+                : pos.angle;
+        device.angle = mappedAngle;
 
         if (device.wasCleaning) {
             const lastRaw = device.rawTrail[device.rawTrail.length - 1];
@@ -2818,7 +2822,7 @@ class EcovacsMap extends utils.Adapter {
         const base = `${device.key}.map`;
         await this.setStateAsync(`${base}.robotX`, Number(pixel.x.toFixed(1)), true);
         await this.setStateAsync(`${base}.robotY`, Number(pixel.y.toFixed(1)), true);
-        await this.setStateAsync(`${base}.angle`, pos.angle, true);
+        await this.setStateAsync(`${base}.angle`, mappedAngle, true);
         await this.setStateAsync(
             `${base}.trail`,
             device.trail.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
