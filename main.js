@@ -757,6 +757,7 @@ class EcovacsMap extends utils.Adapter {
         });
         await this.ensureChannel(`${base}.status`, 'Status');
         await this.ensureChannel(`${base}.control`, 'Control');
+        await this.ensureChannel(`${base}.control.cleaning`, 'Cleaning settings');
         await this.ensureChannel(`${base}.map`, 'Map');
         await this.ensureChannel(`${base}.customArea`, 'Custom area');
         await this.ensureChannel(`${base}.map.bounds`, 'Map bounds');
@@ -1413,6 +1414,34 @@ class EcovacsMap extends utils.Adapter {
         ];
         for (const [suffix, common] of defs) {
             await this.ensureState(`${base}.${suffix}`, common);
+        }
+
+        const cleaningControls = [
+            ['cleanSpeed', `${device.prefix}.control.cleanSpeed`],
+            ['waterLevel', `${device.prefix}.control.waterLevel`],
+            ['cleanCount', `${device.prefix}.control.extended.cleanCount`],
+            ['moppingMode', `${device.prefix}.control.extended.moppingMode`],
+        ];
+
+        for (const [targetName, sourceId] of cleaningControls) {
+            if (!Object.prototype.hasOwnProperty.call(states, sourceId)) {
+                continue;
+            }
+
+            const sourceObject = await this.getForeignObjectAsync(sourceId);
+            if (sourceObject?.type !== 'state' || sourceObject.common?.write !== true) {
+                continue;
+            }
+
+            await this.ensureState(`${base}.control.cleaning.${targetName}`, {
+                ...sourceObject.common,
+                name: sourceObject.common.name || targetName,
+            });
+
+            const sourceState = states[sourceId];
+            if (sourceState?.val !== null && sourceState?.val !== undefined) {
+                await this.setStateAsync(`${base}.control.cleaning.${targetName}`, sourceState.val, true);
+            }
         }
 
         await this.setStateAsync(`${base}.status.sourceInstance`, device.prefix, true);
@@ -3937,6 +3966,27 @@ class EcovacsMap extends utils.Adapter {
             return;
         }
 
+        const cleaningControlMap = {
+            [`${this.namespace}.${device.key}.control.cleaning.cleanSpeed`]: `${device.prefix}.control.cleanSpeed`,
+            [`${this.namespace}.${device.key}.control.cleaning.waterLevel`]: `${device.prefix}.control.waterLevel`,
+            [`${this.namespace}.${device.key}.control.cleaning.cleanCount`]: `${device.prefix}.control.extended.cleanCount`,
+            [`${this.namespace}.${device.key}.control.cleaning.moppingMode`]: `${device.prefix}.control.extended.moppingMode`,
+        };
+
+        if (cleaningControlMap[id]) {
+            const sourceId = cleaningControlMap[id];
+            const sourceObject = await this.getForeignObjectAsync(sourceId);
+
+            if (sourceObject?.type !== 'state' || sourceObject.common?.write !== true) {
+                this.log.warn(`${device.name}: cleaning control is not writable: ${sourceId}`);
+                return;
+            }
+
+            await this.setForeignStateAsync(sourceId, state.val, false);
+            await this.setStateAsync(`${device.key}.control.cleaning.${id.split('.').pop()}`, state.val, true);
+            return;
+        }
+
         const commandMap = {
             [`${this.namespace}.${device.key}.control.clean`]: `${device.prefix}.control.clean`,
             [`${this.namespace}.${device.key}.control.stop`]: `${device.prefix}.control.stop`,
@@ -4031,6 +4081,19 @@ class EcovacsMap extends utils.Adapter {
             }
             this.recordSelectionCapture(device, id, state);
             const base = `${device.key}`;
+
+            const cleaningMirrorMap = {
+                [`${device.prefix}.control.cleanSpeed`]: 'cleanSpeed',
+                [`${device.prefix}.control.waterLevel`]: 'waterLevel',
+                [`${device.prefix}.control.extended.cleanCount`]: 'cleanCount',
+                [`${device.prefix}.control.extended.moppingMode`]: 'moppingMode',
+            };
+
+            if (cleaningMirrorMap[id]) {
+                await this.setStateAsync(`${base}.control.cleaning.${cleaningMirrorMap[id]}`, state.val, true);
+                return;
+            }
+
             if (
                 id === device.positionSource ||
                 id === `${device.prefix}.map.deebotPosition` ||
