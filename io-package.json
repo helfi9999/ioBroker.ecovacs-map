@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "ecovacs-map",
-    "version": "0.7.9",
+    "version": "0.8.0",
     "titleLang": {
       "en": "Ecovacs Map",
       "de": "Ecovacs Karte",
@@ -45,6 +45,19 @@
       "config": "json"
     },
     "news": {
+      "0.8.0": {
+        "en": "Added generic cleaning controls based on writable source states, fixed robot heading on world maps, and made cleaning history JSON compatible with table widgets while preserving existing history data.",
+        "de": "Generische Reinigungssteuerungen anhand schreibbarer Quell-States ergänzt, die Roboterausrichtung auf Weltkarten korrigiert und die Reinigungsverlauf-JSON tabellenkompatibel gemacht, ohne bestehende Verlaufsdaten zu verlieren.",
+        "ru": "Добавлены универсальные настройки уборки на основе доступных для записи исходных состояний, исправлена ориентация робота на картах мира, а JSON истории уборки сделан совместимым с табличными виджетами с сохранением существующих данных.",
+        "pt": "Adicionados controlos de limpeza genéricos com base em estados de origem graváveis, corrigida a orientação do robô em mapas mundiais e tornado o JSON do histórico de limpeza compatível com widgets de tabela, preservando os dados existentes.",
+        "nl": "Generieke reinigingsbediening toegevoegd op basis van schrijfbare bronstates, de robotoriëntatie op wereldkaarten gecorrigeerd en de JSON-reinigingsgeschiedenis geschikt gemaakt voor tabelwidgets met behoud van bestaande gegevens.",
+        "fr": "Ajout de commandes de nettoyage génériques basées sur les états source accessibles en écriture, correction de l’orientation du robot sur les cartes mondiales et compatibilité de l’historique JSON avec les widgets de tableau tout en conservant les données existantes.",
+        "it": "Aggiunti controlli di pulizia generici basati sugli stati sorgente scrivibili, corretta la direzione del robot nelle mappe globali e reso il JSON della cronologia compatibile con i widget tabella mantenendo i dati esistenti.",
+        "es": "Se añadieron controles de limpieza genéricos basados en estados de origen escribibles, se corrigió la orientación del robot en mapas mundiales y se hizo compatible el historial JSON con widgets de tabla conservando los datos existentes.",
+        "pl": "Dodano ogólne sterowanie sprzątaniem na podstawie zapisywalnych stanów źródłowych, poprawiono orientację robota na mapach świata i dostosowano historię JSON do widżetów tabeli z zachowaniem istniejących danych.",
+        "uk": "Додано універсальні елементи керування прибиранням на основі доступних для запису вихідних станів, виправлено орієнтацію робота на світових картах і забезпечено сумісність JSON-історії з табличними віджетами зі збереженням наявних даних.",
+        "zh-cn": "新增基于可写源状态的通用清洁控制，修正世界坐标地图上的机器人朝向，并在保留现有历史数据的同时使清洁历史 JSON 兼容表格组件。"
+      },
       "0.7.9": {
         "en": "Fixed transit room reporting to use configured room names instead of letter aliases and removed obsolete room label appearance states.",
         "de": "Transit-Raummeldungen verwenden wieder die konfigurierten Raumnamen statt Buchstaben-Aliasse; außerdem wurden veraltete Darstellungs-States für Raumlabels entfernt.",
@@ -109,19 +122,6 @@
         "pl": "Naprawiono trasę podczas przejścia ze sprzątania do powrotu oraz ulepszono niezależne od urządzenia wykrywanie zakończenia.",
         "uk": "Виправлено відображення маршруту під час переходу від прибирання до повернення та покращено незалежне від пристрою визначення завершення.",
         "zh-cn": "修复了从清洁切换到返回充电座时的轨迹处理，并改进了与设备型号无关的清洁完成检测。"
-      },
-      "0.7.4": {
-        "en": "Improved cleaning completion detection, trail reset and washing/drying status reporting.",
-        "de": "Erkennung des Reinigungsendes, Zurücksetzen der Fahrspur sowie Statusmeldungen für Wischen und Trocknen verbessert.",
-        "ru": "Улучшено определение завершения уборки, сброс маршрута и отображение состояний мойки и сушки.",
-        "pt": "Melhorada a deteção do fim da limpeza, a reposição do percurso e os estados de lavagem e secagem.",
-        "nl": "Detectie van het einde van de reiniging, het wissen van de route en meldingen voor wassen en drogen verbeterd.",
-        "fr": "Amélioration de la détection de fin de nettoyage, de la réinitialisation du trajet et des états de lavage et de séchage.",
-        "it": "Migliorato il rilevamento della fine della pulizia, il reset del percorso e gli stati di lavaggio e asciugatura.",
-        "es": "Mejorada la detección del fin de la limpieza, el reinicio del recorrido y los estados de lavado y secado.",
-        "pl": "Ulepszono wykrywanie zakończenia sprzątania, reset trasy oraz raportowanie mycia i suszenia.",
-        "uk": "Покращено визначення завершення прибирання, скидання маршруту та відображення станів миття і сушіння.",
-        "zh-cn": "改进了清洁结束检测、轨迹重置以及清洗和烘干状态报告。"
       }
     },
     "tier": 3,

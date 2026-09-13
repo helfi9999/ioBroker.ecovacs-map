@@ -99,6 +99,12 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 
 ## Changelog
 
+### 0.8.0 (2026-09-13)
+- Added generic cleaning controls based only on writable states detected on each ecovacs-deebot device.
+- Fixed robot heading orientation on world-coordinate maps.
+- Changed cleaning history JSON to table-compatible `timestamp` and `event` objects with backward-compatible migration.
+- Updated `@iobroker/testing` to 6.2.1.
+
 ### 0.7.9 (2026-09-07)
 - Fixed transit room reporting so configured room names are shown instead of letter aliases.
 - Removed obsolete room label appearance states that are no longer needed in VIS.
@@ -120,11 +126,6 @@ This is a community adapter and is not affiliated with or endorsed by Ecovacs. E
 - Fixed cleaning trail handling during the transition from cleaning to returning.
 - Prevented temporary `stopped` states from ending an active cleaning run too early.
 - Improved device-agnostic cleaning completion detection for different Deebot models.
-
-### 0.7.4 (2026-09-05)
-- Improved cleaning completion detection and reliable trail reset after finished cleaning runs.
-- Kept the cleaning trail during intermediate station stops between vacuuming and mopping.
-- Added improved live reporting for mopping preparation, mopping start and mop drying.
 
 For older changes, see [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 ## License
