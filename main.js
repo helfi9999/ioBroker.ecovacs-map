@@ -1353,10 +1353,10 @@ class EcovacsMap extends utils.Adapter {
                 {
                     name: 'Cleaning event history',
                     type: 'string',
-                    role: 'text',
+                    role: 'json',
                     read: true,
                     write: false,
-                    def: '',
+                    def: '[]',
                 },
             ],
             [
@@ -1457,11 +1457,21 @@ class EcovacsMap extends utils.Adapter {
             savedCustomAreaActive === 'true' ||
             savedCustomAreaActive === 1 ||
             savedCustomAreaActive === '1';
-        device.historyEvents = String(savedHistoryEvents || '')
-            .split('\n')
-            .map(line => line.trim())
-            .filter(Boolean)
-            .slice(-device.historyMaxEntries);
+        try {
+            const parsedHistory = JSON.parse(String(savedHistoryEvents || '[]'));
+            device.historyEvents = Array.isArray(parsedHistory)
+                ? parsedHistory
+                      .map(entry => String(entry).trim())
+                      .filter(Boolean)
+                      .slice(-device.historyMaxEntries)
+                : [];
+        } catch {
+            device.historyEvents = String(savedHistoryEvents || '')
+                .split('\n')
+                .map(line => line.trim())
+                .filter(Boolean)
+                .slice(-device.historyMaxEntries);
+        }
         const liveLines = device.historyEvents
             .slice(-5)
             .map(entry => entry.replace(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+/, ''));
@@ -1475,7 +1485,7 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${base}.appearance.robotSize`, device.robotSize, true);
         await this.setStateAsync(`${base}.history.maxEntries`, device.historyMaxEntries, true);
         await this.setStateAsync(`${base}.report.current`, device.reportCurrent, true);
-        await this.setStateAsync(`${base}.history.events`, device.historyEvents.join('\n'), true);
+        await this.setStateAsync(`${base}.history.events`, JSON.stringify(device.historyEvents), true);
         await this.setStateAsync(`${base}.history.count`, device.historyEvents.length, true);
         await this.setStateAsync(`${base}.report.sequence`, device.reportSequence, true);
 
@@ -2634,7 +2644,7 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${device.key}.report.lastEvent`, message, true);
         await this.setStateAsync(`${device.key}.report.lastEventTime`, now.toISOString(), true);
         await this.setStateAsync(`${device.key}.report.sequence`, device.reportSequence, true);
-        await this.setStateAsync(`${device.key}.history.events`, device.historyEvents.join('\n'), true);
+        await this.setStateAsync(`${device.key}.history.events`, JSON.stringify(device.historyEvents), true);
         await this.setStateAsync(`${device.key}.history.count`, device.historyEvents.length, true);
     }
 
@@ -3938,7 +3948,7 @@ class EcovacsMap extends utils.Adapter {
             device.historyMaxEntries = this.normalizeHistoryMaxEntries(state.val);
             device.historyEvents = device.historyEvents.slice(-device.historyMaxEntries);
             await this.setStateAsync(`${device.key}.history.maxEntries`, device.historyMaxEntries, true);
-            await this.setStateAsync(`${device.key}.history.events`, device.historyEvents.join('\n'), true);
+            await this.setStateAsync(`${device.key}.history.events`, JSON.stringify(device.historyEvents), true);
             await this.setStateAsync(`${device.key}.history.count`, device.historyEvents.length, true);
             return;
         }
@@ -3947,7 +3957,7 @@ class EcovacsMap extends utils.Adapter {
                 return;
             }
             device.historyEvents = [];
-            await this.setStateAsync(`${device.key}.history.events`, '', true);
+            await this.setStateAsync(`${device.key}.history.events`, '[]', true);
             await this.setStateAsync(`${device.key}.history.count`, 0, true);
             await this.resetOwnButton(id);
             return;
