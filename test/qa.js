@@ -33,6 +33,11 @@ check(
 check(main.includes('control.selfTest'), 'runtime self-test button is implemented');
 check(main.includes('control.rescan'), 'global rescan control is implemented');
 check(main.includes('currentUsedSpotAreas'), 'official-app room selection source is handled');
+check(main.includes('serializeHistoryEvents(events)'), 'history events use a shared JSON serializer');
+check(
+    main.includes("timestamp: match ? match[1] : ''") && main.includes('event: match ? match[2] : text'),
+    'history JSON provides timestamp and event columns',
+);
 
 const ids = (io.instanceObjects || []).map(o => o._id);
 check(new Set(ids).size === ids.length, 'instance object IDs are unique');

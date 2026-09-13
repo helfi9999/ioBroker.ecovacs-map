@@ -1461,7 +1461,14 @@ class EcovacsMap extends utils.Adapter {
             const parsedHistory = JSON.parse(String(savedHistoryEvents || '[]'));
             device.historyEvents = Array.isArray(parsedHistory)
                 ? parsedHistory
-                      .map(entry => String(entry).trim())
+                      .map(entry => {
+                          if (entry && typeof entry === 'object') {
+                              const timestamp = String(entry.timestamp || '').trim();
+                              const event = String(entry.event || '').trim();
+                              return [timestamp, event].filter(Boolean).join('  ');
+                          }
+                          return String(entry).trim();
+                      })
                       .filter(Boolean)
                       .slice(-device.historyMaxEntries)
                 : [];
@@ -1485,7 +1492,7 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${base}.appearance.robotSize`, device.robotSize, true);
         await this.setStateAsync(`${base}.history.maxEntries`, device.historyMaxEntries, true);
         await this.setStateAsync(`${base}.report.current`, device.reportCurrent, true);
-        await this.setStateAsync(`${base}.history.events`, JSON.stringify(device.historyEvents), true);
+        await this.setStateAsync(`${base}.history.events`, this.serializeHistoryEvents(device.historyEvents), true);
         await this.setStateAsync(`${base}.history.count`, device.historyEvents.length, true);
         await this.setStateAsync(`${base}.report.sequence`, device.reportSequence, true);
 
@@ -2531,6 +2538,21 @@ class EcovacsMap extends utils.Adapter {
         }
     }
 
+    serializeHistoryEvents(events) {
+        return JSON.stringify(
+            events
+                .map(entry => {
+                    const text = String(entry || '').trim();
+                    const match = text.match(/^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+(.*)$/s);
+                    return {
+                        timestamp: match ? match[1] : '',
+                        event: match ? match[2] : text,
+                    };
+                })
+                .filter(entry => entry.event),
+        );
+    }
+
     normalizeHistoryMaxEntries(value) {
         const n = Number(value);
         if (!Number.isFinite(n)) {
@@ -2644,7 +2666,11 @@ class EcovacsMap extends utils.Adapter {
         await this.setStateAsync(`${device.key}.report.lastEvent`, message, true);
         await this.setStateAsync(`${device.key}.report.lastEventTime`, now.toISOString(), true);
         await this.setStateAsync(`${device.key}.report.sequence`, device.reportSequence, true);
-        await this.setStateAsync(`${device.key}.history.events`, JSON.stringify(device.historyEvents), true);
+        await this.setStateAsync(
+            `${device.key}.history.events`,
+            this.serializeHistoryEvents(device.historyEvents),
+            true,
+        );
         await this.setStateAsync(`${device.key}.history.count`, device.historyEvents.length, true);
     }
 
@@ -3948,7 +3974,11 @@ class EcovacsMap extends utils.Adapter {
             device.historyMaxEntries = this.normalizeHistoryMaxEntries(state.val);
             device.historyEvents = device.historyEvents.slice(-device.historyMaxEntries);
             await this.setStateAsync(`${device.key}.history.maxEntries`, device.historyMaxEntries, true);
-            await this.setStateAsync(`${device.key}.history.events`, JSON.stringify(device.historyEvents), true);
+            await this.setStateAsync(
+                `${device.key}.history.events`,
+                this.serializeHistoryEvents(device.historyEvents),
+                true,
+            );
             await this.setStateAsync(`${device.key}.history.count`, device.historyEvents.length, true);
             return;
         }
